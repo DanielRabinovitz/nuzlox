@@ -1,0 +1,42 @@
+<header class="site-header">
+  <nav class="site-nav" aria-label="Main navigation">
+    <a href="/" class="site-nav__logo" aria-label="Nuzlox home">
+      <span aria-hidden="true">✡</span> Nuzlox
+    </a>
+    <ul class="site-nav__links" role="list">
+      <li><a href="/ruleset" class="nav-link">Ruleset</a></li>
+      <li><a href="/teambuilder" class="nav-link">Teambuilder</a></li>
+      <li><a href="/forum" class="nav-link">Forum</a></li>
+      <% if (currentUser) { %>
+        <li><a href="/tracker" class="nav-link">Tracker</a></li>
+        <li class="nav-dropdown" x-data="{ open: false }">
+          <button
+            class="nav-link nav-link--button"
+            @click="open = !open"
+            :aria-expanded="open"
+            aria-haspopup="true"
+          ><%= currentUser.username || currentUser.email.split('@')[0] %> ▾</button>
+          <ul x-show="open" @click.away="open = false" class="nav-dropdown__menu" role="menu">
+            <li role="none"><a href="/account/settings" role="menuitem">Settings</a></li>
+            <li role="none"><a href="/account/privacy" role="menuitem">Privacy & Data</a></li>
+            <li role="none"><a href="/account/reports" role="menuitem">My Reports</a></li>
+            <% if (isAdmin) { %>
+              <li role="none" class="nav-dropdown__divider" aria-hidden="true"></li>
+              <li role="none"><a href="/admin/queue" role="menuitem">Mod Queue</a></li>
+            <% } %>
+            <li role="none" class="nav-dropdown__divider" aria-hidden="true"></li>
+            <li role="none">
+              <form method="POST" action="/logout" style="margin:0">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" role="menuitem" class="nav-link--button nav-link--logout">Log out</button>
+              </form>
+            </li>
+          </ul>
+        </li>
+      <% } else { %>
+        <li><a href="/login" class="nav-link">Log in</a></li>
+        <li><a href="/register" class="nav-link nav-link--cta">Sign up</a></li>
+      <% } %>
+    </ul>
+  </nav>
+</header>

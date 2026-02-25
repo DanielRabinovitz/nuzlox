@@ -1,0 +1,43 @@
+<%# views/forum/index.ejs — Forum index with sub-forum listing %>
+
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-header__title">Debate Forum</h1>
+    <p class="page-header__meta">
+      Debate the rules. Compelling arguments become official legal precedent in the ruleset.
+    </p>
+    <% if (currentUser) { %>
+      <a href="/forum/new" class="btn btn--primary">Start a new topic</a>
+    <% } else { %>
+      <p><a href="/register">Sign up</a> or <a href="/login">log in</a> to post.</p>
+    <% } %>
+  </div>
+
+  <% if (!tree || tree.length === 0) { %>
+    <div class="notice notice--info"><p>Forum is being set up. Check back soon!</p></div>
+  <% } else { %>
+    <% tree.forEach(forum => { %>
+      <section class="forum-category">
+        <h2 class="forum-category__title"><%= forum.name %></h2>
+        <% if (forum.description) { %>
+          <p class="forum-category__desc"><%= forum.description %></p>
+        <% } %>
+
+        <% if (forum.subForums && forum.subForums.length > 0) { %>
+          <ul class="subforum-list" role="list">
+            <% forum.subForums.forEach(sub => { %>
+              <li class="subforum-list__item">
+                <a href="/forum?subforum=<%= sub.slug %>" class="subforum-list__link">
+                  <strong class="subforum-list__name"><%= sub.name %></strong>
+                  <% if (sub.description) { %>
+                    <span class="subforum-list__desc"><%= sub.description %></span>
+                  <% } %>
+                </a>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </section>
+    <% }) %>
+  <% } %>
+</div>

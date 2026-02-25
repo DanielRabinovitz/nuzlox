@@ -1,0 +1,30 @@
+<%# views/auth/login.ejs %>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <h1 class="auth-card__title">Log In</h1>
+
+    <form method="POST" action="/login" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="next" value="<%= next %>">
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email address</label>
+        <input type="email" id="email" name="email" class="form-input"
+               autocomplete="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" name="password" class="form-input"
+               autocomplete="current-password" required>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--full">Log in</button>
+    </form>
+
+    <p class="auth-card__alt">
+      Don't have an account? <a href="/register">Sign up</a>
+    </p>
+  </div>
+</div>

@@ -1,0 +1,86 @@
+<%# views/account/privacy.ejs — Privacy controls and data subject rights %>
+<%# @ref wallbreaker/docs/legal/gdpr-compliance.md — DSR, consent management %>
+<%# @ref wallbreaker/docs/legal/child-safety.md — Standard 7 defaults for minors %>
+
+<div class="page-container page-container--narrow">
+  <div class="page-header">
+    <h1 class="page-header__title">Privacy & Data</h1>
+  </div>
+
+  <%- include('../partials/flash') %>
+
+  <section class="settings-section" aria-labelledby="visibility-heading">
+    <h2 class="section-heading" id="visibility-heading">Profile Visibility</h2>
+    <% if (currentUser.is_minor) { %>
+      <div class="notice notice--info">
+        <p>Your profile is set to <strong>private</strong> as required for users under 18
+           (UK Children's Code Standard 7).</p>
+      </div>
+    <% } else { %>
+      <form method="POST" action="/account/privacy/visibility" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group">
+          <label for="profile_visibility" class="form-label">Who can see your profile?</label>
+          <select id="profile_visibility" name="profile_visibility" class="form-select">
+            <option value="public" <%= currentUser.profile_visibility === 'public' ? 'selected' : '' %>>
+              Public — anyone
+            </option>
+            <option value="members" <%= currentUser.profile_visibility === 'members' ? 'selected' : '' %>>
+              Members only — logged-in users
+            </option>
+            <option value="private" <%= currentUser.profile_visibility === 'private' ? 'selected' : '' %>>
+              Private — only you
+            </option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn--primary">Save</button>
+      </form>
+    <% } %>
+  </section>
+
+  <section class="settings-section" aria-labelledby="consent-heading">
+    <h2 class="section-heading" id="consent-heading">Email Preferences</h2>
+    <form method="POST" action="/account/privacy/consent" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group">
+        <label class="form-label form-label--checkbox">
+          <input type="checkbox" name="marketing_email"
+                 <%= consents.marketing_email ? 'checked' : '' %>>
+          Receive update emails about new ruleset versions and site news
+        </label>
+      </div>
+      <button type="submit" class="btn btn--primary">Save preferences</button>
+    </form>
+  </section>
+
+  <section class="settings-section" aria-labelledby="dsr-heading">
+    <h2 class="section-heading" id="dsr-heading">Your Data Rights</h2>
+    <p>Under GDPR/UK GDPR and other applicable laws, you have the right to access and export
+       a copy of the data we hold about you.</p>
+    <form method="POST" action="/account/dsr/export" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <% if (pendingDsr) { %>
+        <div class="notice notice--info">
+          <p>A data export request is already pending. We will email it to you within 30 days.</p>
+        </div>
+      <% } else { %>
+        <button type="submit" class="btn btn--secondary">Request data export</button>
+        <p class="form-hint">We will email your export to <strong><%= currentUser.email %></strong>
+           within 30 days.</p>
+      <% } %>
+    </form>
+
+    <hr class="divider">
+
+    <h3 class="subsection-heading">Global Privacy Control</h3>
+    <% if (currentUser.gpc_opt_out) { %>
+      <p class="notice notice--success">
+        Your browser sent a GPC (Global Privacy Control) signal and we have honoured it —
+        your data is not shared with third parties for advertising.
+      </p>
+    <% } else { %>
+      <p>We detected no GPC signal from your browser. Your data is handled per our
+         <a href="/privacy-policy">Privacy Policy</a>.</p>
+    <% } %>
+  </section>
+</div>

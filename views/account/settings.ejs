@@ -1,0 +1,79 @@
+<%# views/account/settings.ejs — User account settings %>
+<%# @ref wallbreaker/docs/accessibility/WCAG/03-understandable.md §3.3.4 (confirm before password change) %>
+
+<div class="page-container page-container--narrow">
+  <div class="page-header">
+    <h1 class="page-header__title">Account Settings</h1>
+  </div>
+
+  <%- include('../partials/flash') %>
+
+  <section class="settings-section" aria-labelledby="profile-heading">
+    <h2 class="section-heading" id="profile-heading">Profile</h2>
+    <form method="POST" action="/account/settings/profile" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" name="username" class="form-input"
+               value="<%= currentUser.username %>" required minlength="3" maxlength="30"
+               pattern="[a-zA-Z0-9_]+" autocomplete="username">
+        <p class="form-hint">Letters, numbers, and underscores only.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="youtube_channel_url" class="form-label">YouTube channel (optional)</label>
+        <input type="url" id="youtube_channel_url" name="youtube_channel_url" class="form-input"
+               value="<%= currentUser.youtube_channel_url || '' %>"
+               placeholder="https://youtube.com/@yourchannel">
+      </div>
+
+      <button type="submit" class="btn btn--primary">Save profile</button>
+    </form>
+  </section>
+
+  <section class="settings-section" aria-labelledby="password-heading">
+    <h2 class="section-heading" id="password-heading">Change Password</h2>
+    <form method="POST" action="/account/settings/password" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group">
+        <label for="current_password" class="form-label">Current password</label>
+        <input type="password" id="current_password" name="current_password" class="form-input"
+               required autocomplete="current-password">
+      </div>
+
+      <div class="form-group">
+        <label for="new_password" class="form-label">New password</label>
+        <input type="password" id="new_password" name="new_password" class="form-input"
+               required minlength="10" autocomplete="new-password"
+               aria-describedby="pw-hint">
+        <p class="form-hint" id="pw-hint">Minimum 10 characters.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password" class="form-label">Confirm new password</label>
+        <input type="password" id="confirm_password" name="confirm_password" class="form-input"
+               required autocomplete="new-password">
+      </div>
+
+      <button type="submit" class="btn btn--primary">Change password</button>
+    </form>
+  </section>
+
+  <section class="settings-section settings-section--danger" aria-labelledby="delete-heading">
+    <h2 class="section-heading section-heading--danger" id="delete-heading">Delete Account</h2>
+    <p>Deleting your account begins a 30-day grace period during which your data is anonymised.
+       After 30 days it is permanently erased. This cannot be undone.</p>
+    <form method="POST" action="/account/delete" novalidate
+          onsubmit="return confirm('Are you sure? Your account will be scheduled for deletion.');">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group">
+        <label for="delete_password" class="form-label">Confirm your password to continue</label>
+        <input type="password" id="delete_password" name="password" class="form-input"
+               required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn--danger">Delete my account</button>
+    </form>
+  </section>
+</div>

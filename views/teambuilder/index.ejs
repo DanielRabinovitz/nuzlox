@@ -1,0 +1,184 @@
+<%# views/teambuilder/index.ejs — Teambuilder shell (Alpine.js mounts here) %>
+<%# @ref wallbreaker/docs/accessibility/APXpatterns/challenge-patterns.md — Save Early, Save Often %>
+<%# @ref wallbreaker/docs/accessibility/WCAG/02-operable.md §2.5.7 (keyboard alternative for drag) %>
+<%# @ref wallbreaker/docs/accessibility/WCAG/04-robust.md §4.1.3 (aria-live validation result) %>
+
+<script id="teambuilder-data" type="application/json"><%- teamData %></script>
+
+<div class="page-container" x-data="teambuilder()" x-init="init()">
+
+  <div class="page-header">
+    <h1 class="page-header__title">Teambuilder</h1>
+    <p class="page-header__meta">Build your team and check it against the Nuzlox rules.</p>
+    <details class="rules-accordion">
+      <summary class="rules-accordion__toggle">View current ruleset summary</summary>
+      <div class="rules-accordion__content">
+        <p>
+          <strong>Key rules:</strong> No Ghost or Dark types. No legendaries/mythicals/fossils.
+          Psychic/Fairy can only have defensive/healing moves. No forbidden moves or items.
+          All team members must be bred. <a href="/ruleset">Full ruleset →</a>
+        </p>
+      </div>
+    </details>
+  </div>
+
+  <div class="teambuilder-layout">
+    <div class="teambuilder-slots" role="group" aria-label="Your team (6 slots)">
+      <template x-for="(slot, index) in team" :key="index">
+        <div class="slot-card" :class="{ 'slot-card--filled': slot.species, 'slot-card--invalid': slot.violations?.length }">
+          <div class="slot-card__header">
+            <span class="slot-card__number" aria-label="Slot" x-text="index + 1"></span>
+            <span class="slot-card__species" x-text="slot.species || 'Empty'"></span>
+          </div>
+
+          <% /* WCAG §2.5.7 — keyboard alternative to drag: "Change" button opens search dropdown */ %>
+          <div class="slot-card__controls">
+            <button
+              class="btn btn--small"
+              @click="openPicker(index)"
+              :aria-label="'Choose Pokémon for slot ' + (index + 1)"
+              type="button"
+            >Change</button>
+            <button
+              class="btn btn--small btn--danger"
+              @click="clearSlot(index)"
+              :aria-label="'Clear slot ' + (index + 1)"
+              x-show="slot.species"
+              type="button"
+            >✕</button>
+          </div>
+
+          <div class="slot-card__violations" x-show="slot.violations?.length" role="alert">
+            <template x-for="v in (slot.violations || [])" :key="v">
+              <p class="violation-msg" x-text="v"></p>
+            </template>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <div class="teambuilder-sidebar">
+      <%# WCAG §4.1.3 — validation result announced via aria-live %>
+      <div class="validation-panel" role="status" aria-live="polite" aria-atomic="true">
+        <h2 class="validation-panel__heading">Validation</h2>
+        <div class="validation-panel__status"
+             :class="{ 'status--valid': isValid, 'status--invalid': !isValid && hasTeam, 'status--empty': !hasTeam }">
+          <span class="status__icon" aria-hidden="true" x-text="hasTeam ? (isValid ? '✓' : '✕') : '○'"></span>
+          <span class="status__label"
+                x-text="!hasTeam ? 'Add Pokémon to validate' : (isValid ? 'Team is kosher!' : 'Team has violations')">
+          </span>
+        </div>
+        <ul class="violation-list" x-show="violations.length" role="list" aria-label="Violations">
+          <template x-for="v in violations" :key="v">
+            <li class="violation-list__item" x-text="v"></li>
+          </template>
+        </ul>
+        <ul class="warning-list" x-show="warnings.length" role="list" aria-label="Warnings">
+          <template x-for="w in warnings" :key="w">
+            <li class="warning-list__item" x-text="w"></li>
+          </template>
+        </ul>
+      </div>
+
+      <% if (currentUser) { %>
+        <div class="save-panel">
+          <h2 class="save-panel__heading">Save Team</h2>
+          <div class="form-group">
+            <label for="team-name" class="form-label">Team name</label>
+            <input type="text" id="team-name" class="form-input" x-model="teamName" maxlength="100"
+                   placeholder="My kosher team">
+          </div>
+          <button class="btn btn--primary" @click="saveTeam()" :disabled="!hasTeam" type="button">
+            Save team
+          </button>
+          <p class="save-status" x-show="saveStatus" x-text="saveStatus" aria-live="polite"></p>
+        </div>
+      <% } else { %>
+        <div class="save-panel save-panel--guest">
+          <p>
+            <a href="/register">Sign up</a> to save teams permanently.
+            Your current team is auto-saved in your browser.
+          </p>
+        </div>
+      <% } %>
+
+      <% if (currentUser) { %>
+        <div class="saved-teams-panel" x-show="savedTeams.length">
+          <h2 class="saved-teams-panel__heading">Saved Teams</h2>
+          <ul role="list">
+            <template x-for="t in savedTeams" :key="t.id">
+              <li class="saved-team-item">
+                <button class="btn btn--link" @click="loadTeam(t)" type="button">
+                  <span x-text="t.team_name"></span>
+                  <span class="badge" :class="t.is_valid ? 'badge--valid' : 'badge--invalid'"
+                        x-text="t.is_valid ? 'Kosher' : 'Violations'"></span>
+                </button>
+              </li>
+            </template>
+          </ul>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <%# Pokémon picker modal — WCAG §4.1.2 dialog pattern %>
+  <div
+    x-show="pickerOpen"
+    x-transition
+    role="dialog"
+    aria-modal="true"
+    aria-label="Choose a Pokémon"
+    class="modal-overlay"
+    @keydown.escape="closePicker()"
+  >
+    <div class="modal" @click.stop>
+      <div class="modal__header">
+        <h2 class="modal__title">Choose a Pokémon</h2>
+        <button class="modal__close" @click="closePicker()" aria-label="Close picker" type="button">✕</button>
+      </div>
+      <div class="modal__body">
+        <label for="pokemon-search" class="form-label">Search by name or type</label>
+        <input
+          type="search"
+          id="pokemon-search"
+          class="form-input"
+          x-model="search"
+          @input="filterPokemon()"
+          placeholder="e.g. Gogoat, Water, Fairy..."
+          autocomplete="off"
+        >
+        <ul class="pokemon-list" role="listbox" aria-label="Pokémon results">
+          <template x-for="p in filteredPokemon.slice(0,50)" :key="p.id">
+            <li
+              class="pokemon-list__item"
+              :class="{ 'pokemon-list__item--forbidden': p.isForbidden }"
+              role="option"
+              :aria-selected="false"
+              @click="selectPokemon(p)"
+              @keydown.enter="selectPokemon(p)"
+              tabindex="0"
+            >
+              <span class="pokemon-list__name" x-text="p.name"></span>
+              <span class="pokemon-list__types">
+                <template x-for="t in p.types" :key="t">
+                  <span class="type-badge" :class="'type-badge--' + t.toLowerCase()" x-text="t"></span>
+                </template>
+              </span>
+              <span x-show="p.isForbidden" class="pokemon-list__forbidden" aria-label="Forbidden">⚠</span>
+            </li>
+          </template>
+          <li x-show="filteredPokemon.length === 0" class="pokemon-list__empty">No results.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div x-show="pickerOpen" class="modal-backdrop" @click="closePicker()" aria-hidden="true"></div>
+</div>
+
+<script>
+  window.__TEAMBUILDER_CONFIG__ = JSON.parse(
+    document.getElementById('teambuilder-data').textContent
+  );
+</script>
+<script src="/js/teambuilder-engine.js" defer></script>

@@ -1,0 +1,40 @@
+<%# views/account/reports.ejs — Reports submitted by the current user %>
+
+<div class="page-container page-container--narrow">
+  <div class="page-header">
+    <h1 class="page-header__title">My Reports</h1>
+    <p class="page-header__meta">Reports you have submitted to moderation.</p>
+  </div>
+
+  <% if (!reports || reports.length === 0) { %>
+    <div class="notice notice--info">
+      <p>You haven't submitted any reports yet.</p>
+    </div>
+  <% } else { %>
+    <ul class="report-list" role="list">
+      <% reports.forEach(r => { %>
+        <li class="report-card">
+          <div class="report-card__header">
+            <span class="badge badge--status-<%= r.status %>"><%= r.status %></span>
+            <time class="report-card__time" datetime="<%= r.created_at %>">
+              <%= new Date(r.created_at).toLocaleDateString() %>
+            </time>
+          </div>
+          <p class="report-card__reason">
+            <strong>Reason:</strong> <%= r.category.replace(/_/g, ' ') %>
+          </p>
+          <% if (r.description) { %>
+            <p class="report-card__desc"><%= r.description %></p>
+          <% } %>
+          <% if (r.status === 'resolved' && r.resolution_note) { %>
+            <div class="notice notice--success report-card__resolution">
+              <strong>Resolution:</strong> <%= r.resolution_note %>
+            </div>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <p style="margin-top: 1.5rem;"><a href="/account/settings" class="btn btn--secondary">← Account settings</a></p>
+</div>

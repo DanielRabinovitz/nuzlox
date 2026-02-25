@@ -1,0 +1,9 @@
+node_modules/
+.env
+data/dev.sqlite3
+data/dev.sqlite3-wal
+data/dev.sqlite3-shm
+public/cache/pokemon-data.json
+logs/
+*.log
+.DS_Store

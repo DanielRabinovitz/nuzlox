@@ -1,0 +1,132 @@
+<%# views/admin/ruleset-editor.ejs — Admin ruleset version editor %>
+<%# @ref wallbreaker/docs/accessibility/APXpatterns/challenge-patterns.md — Certified True Copy (immutable published versions) %>
+
+<div class="page-container" x-data="rulesetEditor()">
+  <div class="page-header">
+    <h1 class="page-header__title">Ruleset Editor</h1>
+    <p class="page-header__meta">
+      Current version: <strong>v<%= currentVersion ? currentVersion.version_number : 'none' %></strong>
+    </p>
+  </div>
+
+  <%- include('../partials/flash') %>
+
+  <div class="editor-layout">
+    <aside class="editor-sidebar" aria-label="Version history">
+      <h2 class="section-heading">Versions</h2>
+      <ul class="version-list" role="list">
+        <% versions.forEach(v => { %>
+          <li class="version-list__item <%= v.is_current ? 'version-list__item--current' : '' %>">
+            <a href="/admin/ruleset/<%= v.id %>">
+              v<%= v.version_number %>
+              <% if (v.is_current) { %><span class="badge badge--current">Current</span><% } %>
+            </a>
+            <time class="version-list__date" datetime="<%= v.published_at %>">
+              <%= v.published_at ? new Date(v.published_at).toLocaleDateString() : 'Draft' %>
+            </time>
+          </li>
+        <% }) %>
+      </ul>
+      <a href="/admin/ruleset/new" class="btn btn--secondary btn--full">+ New version</a>
+    </aside>
+
+    <main class="editor-main">
+      <% if (editVersion) { %>
+        <div class="editor-version-header">
+          <h2 class="section-heading">
+            v<%= editVersion.version_number %>
+            <% if (editVersion.is_current) { %>
+              <span class="badge badge--current">Current</span>
+            <% } else if (!editVersion.published_at) { %>
+              <span class="badge badge--draft">Draft</span>
+            <% } %>
+          </h2>
+          <% if (editVersion.summary) { %>
+            <p class="editor-version-summary"><%= editVersion.summary %></p>
+          <% } %>
+        </div>
+
+        <% if (!editVersion.published_at) { %>
+          <%# Only drafts can be edited — published versions are immutable (Certified True Copy) %>
+          <form method="POST" action="/admin/ruleset/<%= editVersion.id %>/save" novalidate>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="form-group">
+              <label for="summary" class="form-label">Version summary</label>
+              <input type="text" id="summary" name="summary" class="form-input"
+                     value="<%= editVersion.summary || '' %>" maxlength="500"
+                     placeholder="e.g. Added Nacli ruling, clarified Ditto exception">
+            </div>
+            <button type="submit" class="btn btn--secondary">Save summary</button>
+          </form>
+
+          <h3 class="subsection-heading">Rules</h3>
+          <ul class="rule-editor-list" role="list">
+            <% (editRules || []).forEach(rule => { %>
+              <li class="rule-editor-item">
+                <form method="POST" action="/admin/ruleset/<%= editVersion.id %>/rules/<%= rule.id %>" novalidate>
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <div class="rule-editor-item__header">
+                    <code class="rule-key"><%= rule.rule_key %></code>
+                    <span class="badge"><%= rule.category %></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="title-<%= rule.id %>" class="form-label">Title</label>
+                    <input type="text" id="title-<%= rule.id %>" name="title" class="form-input"
+                           value="<%= rule.title %>" required maxlength="200">
+                  </div>
+                  <div class="form-group">
+                    <label for="body-<%= rule.id %>" class="form-label">Body (Markdown)</label>
+                    <textarea id="body-<%= rule.id %>" name="body" class="form-textarea form-textarea--code"
+                              rows="6" required><%= rule.body %></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="severity-<%= rule.id %>" class="form-label">Severity</label>
+                    <select id="severity-<%= rule.id %>" name="severity" class="form-select">
+                      <option value="mandatory" <%= rule.severity === 'mandatory' ? 'selected' : '' %>>Mandatory</option>
+                      <option value="recommended" <%= rule.severity === 'recommended' ? 'selected' : '' %>>Recommended</option>
+                      <option value="informational" <%= rule.severity === 'informational' ? 'selected' : '' %>>Informational</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn--small">Update rule</button>
+                </form>
+              </li>
+            <% }) %>
+          </ul>
+
+          <div class="editor-publish-zone">
+            <h3 class="subsection-heading">Publish</h3>
+            <p>Publishing makes this the current live version. This action cannot be undone —
+               published versions are immutable records.</p>
+            <form method="POST" action="/admin/ruleset/<%= editVersion.id %>/publish" novalidate
+                  onsubmit="return confirm('Publish v<%= editVersion.version_number %> as the current live ruleset?');">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn btn--primary">Publish v<%= editVersion.version_number %></button>
+            </form>
+          </div>
+        <% } else { %>
+          <div class="notice notice--info">
+            <p>This version is published and immutable. Create a new version to make changes.</p>
+          </div>
+          <h3 class="subsection-heading">Rules (<%= (editRules || []).length %>)</h3>
+          <ul class="rule-editor-list rule-editor-list--readonly" role="list">
+            <% (editRules || []).forEach(rule => { %>
+              <li class="rule-editor-item rule-editor-item--readonly">
+                <div class="rule-editor-item__header">
+                  <code class="rule-key"><%= rule.rule_key %></code>
+                  <span class="badge"><%= rule.category %></span>
+                  <span class="badge badge--severity-<%= rule.severity %>"><%= rule.severity %></span>
+                </div>
+                <strong><%= rule.title %></strong>
+                <p><%= rule.body %></p>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      <% } else { %>
+        <div class="notice notice--info">
+          <p>Select a version from the sidebar or create a new draft.</p>
+        </div>
+      <% } %>
+    </main>
+  </div>
+</div>

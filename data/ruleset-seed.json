@@ -1,0 +1,202 @@
+{
+  "version_label": "1.0",
+  "changelog": "Initial official Nuzlox ruleset (v1.0). Derived from the Wallbreaker PIKA rulings as of February 2026.",
+  "rules": [
+
+    {
+      "rule_key": "kosher_land_pokemon",
+      "category": "Kosher Pokémon",
+      "sort_order": 100,
+      "title": "Kosher Land Pokémon",
+      "body": "A land Pokémon is kosher only if it has completely split hooves and chews its cud — the two signs required by Leviticus 11:3. Confirmed kosher land Pokémon (Gen 9 national dex, breedable only):\n\n- **Dubwool** — clear wool-bearing ruminant analogue\n- **Gogoat** — goat; confirmed ruminant and split-hooved\n- **Girafarig** — giraffe analogue; giraffe is classically considered kosher\n- **Stantler** — deer analogue; deer is kosher\n\nAll other land Pokémon are forbidden until a formal PIKA ruling confirms their kosher status."
+    },
+    {
+      "rule_key": "kosher_sea_pokemon",
+      "category": "Kosher Pokémon",
+      "sort_order": 101,
+      "title": "Kosher Sea Pokémon",
+      "body": "A sea Pokémon is kosher only if it is a Water type, has confirmed fins and scales, and is fully aquatic (Leviticus 11:9–12). Confirmed kosher sea Pokémon:\n\nAlomomola, Arctovish, Gorebyss, Huntail, Dondozo, Barraskewda, Bruxish, Milotic line, Magikarp (but **not** Gyarados — Gyarados lacks the fins/scales profile of a standard fish), Tatsugiri, Kingdra line, Basculin, Lumineon line, Luvdisc, Seaking line, Wishiwashi.\n\nAll other water Pokémon are forbidden unless a PIKA ruling confirms their status."
+    },
+    {
+      "rule_key": "kosher_sky_pokemon",
+      "category": "Kosher Pokémon",
+      "sort_order": 102,
+      "title": "Kosher Sky Pokémon",
+      "body": "Sky Pokémon must be Flying types (or confirmed bird analogues), able to live on a purely plant-based diet, and have either one toe that is longer than the others or a rear talon — using real-world bird analogues as the baseline.\n\n**Confirmed kosher sky Pokémon:** Pidgeot line, Swellow line, Unfezant line, Fearow line, Farfetch'd line.\n\n**Source:** [List of Kosher Birds](https://tuxeliana.wordpress.com/2015/01/23/list-of-kosher-birds/)"
+    },
+    {
+      "rule_key": "kosher_bug_pokemon",
+      "category": "Kosher Pokémon",
+      "sort_order": 103,
+      "title": "Kosher Bug Pokémon — Jumping Locusts",
+      "body": "Among bug Pokémon, only species that jump are kosher — analogous to the locust exemption in Leviticus 11:21–22. Currently the only confirmed kosher bug Pokémon is:\n\n- **Lokix** (but not Nymble — Lokix is the evolved form that learns Bounce, confirming the locust analogy)\n\nNymble is not kosher on its own. Only use Lokix."
+    },
+    {
+      "rule_key": "kosher_byproducts",
+      "category": "Kosher Pokémon",
+      "sort_order": 104,
+      "title": "Kosher Byproducts",
+      "body": "These Pokémon themselves are not necessarily kosher to keep on a team, but their byproducts are kosher and may be used:\n\n- **Nacli & Garganacl** — salt is kosher (ruled as an external mineral secretion, neither meat nor milk). See the Nacli Ruling. Note: **Naclstack** salt is forbidden — it is used for hunting.\n- **Shuckle** — berry juice is kosher (honey is a real-world analogue)\n- **Ribombee line** — honey is kosher\n- **Combee line** — honey is kosher\n\nHoney is permissible under halacha even from non-kosher bees because it is an external transformation of kosher floral nectar, not a secretion of the bee itself."
+    },
+    {
+      "rule_key": "forbidden_pokemon",
+      "category": "Kosher Pokémon",
+      "sort_order": 105,
+      "title": "Pokémon Explicitly Forbidden from Teams",
+      "body": "The following Pokémon may never be carried on a team under any circumstances:\n\n- **Ghost types** — forbidden by Leviticus 19:31: \"Do not turn to ghosts or spirits.\"\n- **Unbreedable Pokémon** (legendaries, mythicals, most Ultra Beasts) — lineage cannot be confirmed; purity of breed is required (see Kilaayim rules)."
+    },
+
+    {
+      "rule_key": "breeding_requirement",
+      "category": "Team Composition",
+      "sort_order": 200,
+      "title": "Breeding Requirement — Confirmed Kosher Lineage",
+      "body": "A Jewish trainer may only travel with **pure-bred Pokémon** where both parents are confirmed to be of the same species.\n\n**Process:**\n1. Catch 2 wild Pokémon of the desired species.\n2. Breed them together; use the hatched child on your team.\n3. It is preferable to breed at least two siblings (for doubles teams).\n\n**Wild-caught Pokémon may not be used directly** — their lineage is unconfirmed.\n\n**Source:** Rambam Kilaayim 9:7–8"
+    },
+    {
+      "rule_key": "no_fossil_pokemon",
+      "category": "Team Composition",
+      "sort_order": 201,
+      "title": "Fossil Pokémon are Forbidden — Necromancy",
+      "body": "A Jewish trainer may not use fossil Pokémon. Reviving fossils constitutes a form of necromancy, which is expressly forbidden in the Torah (Deuteronomy 18:10–11)."
+    },
+    {
+      "rule_key": "kilaayim_same_kind",
+      "category": "Team Composition",
+      "sort_order": 202,
+      "title": "Kilaayim — Same Kind Rule (Team Composition)",
+      "body": "Pokémon working together must be **of the same kind** (Mishneh Torah Kilaayim 9:8). 'Same kind' means: same type of mother, same type of father, and similar in appearance and nature.\n\n**In Singles:** Your Pokémon must always be the same species as your opponent's active Pokémon. You must mirror the opponent's team.\n\n**Ditto exception:** A Ditto may be used as a substitute for any opponent Pokémon (Exodus 21:22–25 — \"eye for eye\"). Rules for Ditto use:\n- A given Ditto may only transform into a forbidden Pokémon at a maximum of 1-in-60 transformations (Talmud Hulin 98a–b).\n- After transforming into a forbidden type, the player must bathe in a natural body of water.\n- The Ditto must be nicknamed to make the transformation obvious. The player must verbally announce each move is from a Ditto.\n- Some authorities rule Ditto use violates *ma'arat ayin* — be prepared to defend the decision.\n\n**Source:** Rambam Kilaayim 9:7–8"
+    },
+    {
+      "rule_key": "doubles_npc",
+      "category": "Team Composition",
+      "sort_order": 203,
+      "title": "Doubles Rules — Against NPCs",
+      "body": "In a doubles battle against an NPC:\n\n1. All Pokémon on the player's side must satisfy the breeding laws and be of the same kind.\n2. Both Pokémon on the player's side must be the same species as at least one of the opponent's Pokémon.\n3. No Pokémon on the field can be of different kosher status. A Pokémon with a different kosher status must be double-targeted and KO'd first.\n4. If the opponent has a ghost or dark type on the field, the player must send out two Nacli-line Pokémon (with Purifying Salt) and KO all ghost types before swapping back."
+    },
+    {
+      "rule_key": "doubles_pvp",
+      "category": "Team Composition",
+      "sort_order": 204,
+      "title": "Doubles Rules — Player vs. Player (Jews)",
+      "body": "In a doubles battle between two Jewish players:\n\n- All Pokémon on the field from both teams must be of the same species and kosher status.\n- All Pokémon must be bred from the same lineage — the common ancestors must be the same two wild-caught parents.\n- In practice, both players must agree on team compositions in advance (2 pairs of 3, 2 trios of 2, or two mono-Pokémon teams)."
+    },
+
+    {
+      "rule_key": "forbidden_moves",
+      "category": "Laws of Battle",
+      "sort_order": 300,
+      "title": "Forbidden Moves",
+      "body": "The following moves are forbidden under Nuzlox law:\n\n**Reflection/counter moves** — Proverbs 24:29, Exodus 21:22–25: Counter, Mirror Coat, Magic Coat, Magic Bounce.\n\n**Offensive Psychic/Fairy moves** — sorcery can only be used for healing. Psychic, Psyshock, Moonblast, Dazzling Gleam, Play Rough, etc. (see restricted types list in teambuilder).\n\n**Ghost and Dark type moves** — sorcery and necromancy are forbidden.\n\n**Status-inflicting moves** — Deuteronomy (Exodus 23:5): Will-O-Wisp, Thunder Wave, Toxic, Hypnosis, Spore, Sleep Powder, Confuse Ray, etc. Stat drops, confusion, flinch, and trapping are all considered statuses.\n\n**Life drain moves** — Deuteronomy 12:23 (\"the blood is the life\"): Drain Punch, Giga Drain, Leech Seed, etc.\n\n**Recoil moves** — forbidden to order an animal to harm itself: Double-Edge, Flare Blitz, Head Smash, Brave Bird, etc.\n\n**Self-KO moves**: Lunar Dance, Healing Wish, Self-Destruct, Explosion.\n\n**Divination**: Future Sight.\n\n**Illusion/deception** — Kitzur Shulchan Aruch 166: Imposter, Substitute.\n\n**Curse** — any move named \"Curse\". A Pokémon hit by Curse (or Forest's Curse) must be left in the PC for 7 in-game days after the battle."
+    },
+    {
+      "rule_key": "forbidden_items",
+      "category": "Laws of Battle",
+      "sort_order": 301,
+      "title": "Forbidden Items",
+      "body": "The following held items are forbidden:\n\n**Ritual power items** — Sefer Mitzvot Hakatzar, Chafetz Chayim, Mitzvah 169 (stones held in the hand to manipulate animals are spells): Mega Stones, Z-Crystals, Dynamax Band, Tera Bracelet.\n\n**Items that harm the holder**: Life Orb, Black Sludge, Sticky Barb, Toxic Orb, Flame Orb.\n\n**Items triggered by the holder being hurt**: Weakness Policy, Adrenaline Orb.\n\n**Items that lower opponent stats**: Bright Powder.\n\n**Items that may cause unnecessary harm**: Lagging Tail.\n\n**Status-inflicting items**: King's Rock, Toxic Orb.\n\n**Forbidden move boosters**: Big Root (drain moves), Twisted Spoon (psychic offense), Binding Band (trapping).\n\n**Sorcery items**: Odd Keystone, Cleanse Tag.\n\n**Food with no kashrut**: Meat or dairy items. The Pokémon universe has no kashrut agencies to certify meat or dairy.\n\nNote: It is permissible to **battle** opponents who use these items and spells — the prohibition is only on the player's own use."
+    },
+    {
+      "rule_key": "beneficial_items",
+      "category": "Laws of Battle",
+      "sort_order": 302,
+      "title": "Beneficial Stat Items Must Be Used Promptly",
+      "body": "When a player acquires a permanent stat booster (Calcium, Carbos, Iron, etc.), it must be used before the next battle to prevent future harm to the Pokémon — delayed use implies neglect of the animal's welfare."
+    },
+    {
+      "rule_key": "pikuach_nefesh",
+      "category": "Laws of Battle",
+      "sort_order": 303,
+      "title": "Pikuach Nefesh — Emergency Exception",
+      "body": "It is permissible to break all laws except for murder, idolatry, and adultery to save a life. Under *milchemet mitzvah* (mandatory war), battle is necessary.\n\n**Application:** If forced into a Pokémon battle with no way to prepare or flee, the player may win using any means, even if this requires breaking other Nuzlox rules.\n\n**However:** A player is expected to prepare in advance for known unskippable battles without breaking rules. Players may not initiate unnecessary battles without justification (grinding for mandatory battle EXP, or acquiring care items are justified reasons)."
+    },
+
+    {
+      "rule_key": "impure_types_ghost_dark",
+      "category": "Laws of Impure Types",
+      "sort_order": 400,
+      "title": "Ghost and Dark Types Are Forbidden",
+      "body": "It is forbidden for a player to have a Ghost or Dark type on their team (Leviticus 19:31: \"Do not turn to ghosts or spirits\"). Evil spirits fall under the domain of sorcerers.\n\n**When forced to battle a ghost, dark, or psychic type:**\n1. KO the ghost/dark/psychic type as soon as possible before any other targets — even an allied Pokémon in a tag team battle.\n2. **Gen 9+:** Use a Nacli-line Pokémon with Purifying Salt to battle ghost types (see Nacli Ruling).\n3. **Gen 8 or earlier:** Use a non-fossil rock+water type, or any water-type fish that can learn Brine.\n\n**After encountering a ghost type** (overworld or battle):\n1. Find the nearest lake or ocean and swim in it to purify yourself (mikveh).\n2. In Gen 9: also wash all Pokémon at a campground."
+    },
+    {
+      "rule_key": "impure_types_psychic_fairy",
+      "category": "Laws of Impure Types",
+      "sort_order": 401,
+      "title": "Psychic and Fairy Types — Restricted Use",
+      "body": "Psychic and Fairy types may be on the team, but only defensive or healing Psychic/Fairy moves may be learned. Offensive Psychic and Fairy moves are forbidden (sorcery may only be used for healing purposes).\n\nMoves that indirectly buff offenses (e.g., Agility's speed boost) are **allowed**. Moves that directly buff offense (e.g., Calm Mind's Sp. Atk boost) are **forbidden**."
+    },
+    {
+      "rule_key": "nacli_ruling",
+      "category": "Laws of Impure Types",
+      "sort_order": 402,
+      "title": "Nacli Ruling — PIKA Official Decision",
+      "body": "**PIKA Rulings on the Nacli line:**\n\n1. Nacli and Garganacl salt is **permissible** for food and medical use — ruled as an external mineral secretion (neither meat nor milk; pareve). It is the preferred salt for kashering Pokémon meat.\n2. Naclstack salt is **forbidden** for consumption — it is used for hunting (analogous to poisonous predator secretions).\n3. The Nacli line (with the ability **Purifying Salt**) is the **only Pokémon permitted to battle ghost types**.\n4. It is a *minhag* (custom) to honor the dead by bringing Nacli to their grave sites.\n\n**Reasoning:** Nacli salt is a pure mineral. Raw minerals are not flesh; salt has high spiritual purity and is used to kasher the Temple altar and purify meat. Garganacl salt has strong medicinal properties (Scarlet Pokédex), which may trigger *pikuach nefesh* (saving lives)."
+    },
+
+    {
+      "rule_key": "animal_welfare_feeding",
+      "category": "Animal Welfare",
+      "sort_order": 500,
+      "title": "Animals Must Eat Before Their Masters",
+      "body": "Animals must eat before their masters (Talmud Berachot 40a). Each tamed Pokémon must be fed at least once per in-game day with a food item from the player's inventory.\n\nIf a player runs out of food, all other activities must halt until the Pokémon can be properly cared for."
+    },
+    {
+      "rule_key": "animal_welfare_healing",
+      "category": "Animal Welfare",
+      "sort_order": 501,
+      "title": "Pokémon Must Be Healed Immediately After Battle",
+      "body": "Tzaar baalei chayyim (animal cruelty) is a Torah prohibition (Talmud Bava Metzia 32b). Therefore:\n\n- If a Pokémon is injured, it must be **immediately healed** after the battle to prevent suffering. Between battles, all Pokémon must be at max HP.\n- Always carry revives and heal items, or immediately return to a Pokémon Center after any injuries.\n- You must **wherever possible prevent your Pokémon from taking damage**."
+    },
+    {
+      "rule_key": "animal_welfare_no_status",
+      "category": "Animal Welfare",
+      "sort_order": 502,
+      "title": "No Inflicting Status on Enemy Pokémon",
+      "body": "Exodus 23:5: \"When you see the donkey of your enemy lying under its burden and would refrain from raising it, you must nevertheless raise it with him.\"\n\nApplying this: it is forbidden to cause status ailments to enemy Pokémon because that adds unnecessary burdens. Any move with a chance of causing burn, poison, confusion, flinch, stat drop, or trapping is forbidden to teach your Pokémon.\n\n**Exceptions:** Moves that reset statuses (e.g., Haze) are permitted even if they remove stat boosts.\n\nIt is also forbidden for your own Pokémon to remain statused — heal mid-battle immediately if statused. Moves that cause self stat drops are forbidden unless the drop is offset by a boost (e.g., Shell Smash is permitted)."
+    },
+    {
+      "rule_key": "animal_welfare_no_nest_catching",
+      "category": "Animal Welfare",
+      "sort_order": 503,
+      "title": "Do Not Catch Young Pokémon in the Presence of a Parent",
+      "body": "It is a Torah prohibition to take eggs from a nest while the mother is present (Shiluach HaKen, Deuteronomy 22:6–7). Therefore: while catching Pokémon, it is **forbidden to catch a young Pokémon in the presence of a further-evolved version** of that Pokémon (e.g., in a horde or overworld encounter)."
+    },
+    {
+      "rule_key": "animal_welfare_no_grinding",
+      "category": "Animal Welfare",
+      "sort_order": 504,
+      "title": "No Unnecessary Grinding",
+      "body": "Hunting in Judaism is generally frowned upon as a source of potential animal cruelty. Therefore unnecessary grinding is prohibited.\n\n**Preferred:** Level up Pokémon via the daycare whenever available.\n\n**Grinding is permitted only when:**\n- There is no other reasonable way to progress.\n- You are too low on funds to afford daycare or care items (grind until needs are met, then stop).\n- You are preparing for a mandatory story battle — but you may only grind up to the level of the **lowest-leveled Pokémon** in the opponent's party.\n\n**OHKO rule:** In battle, you must KO all opponent Pokémon in **one hit** wherever possible (kosher slaughter requires a clean, instant kill)."
+    },
+
+    {
+      "rule_key": "shabbat_observance",
+      "category": "Shabbat",
+      "sort_order": 600,
+      "title": "Shabbat Observance — Every 7th In-Game Day",
+      "body": "On every 7th in-game day, from Friday twilight to Saturday nightfall, the following rules apply:\n\n**Forbidden on Shabbat:**\n- Battling trainers or wild Pokémon\n- Using field moves (HMs) or riding Miraidon/Koraidon\n- Carrying items between a private (walled) and public (unwalled) domain\n- Trapping (restricting the movement of) any animal\n- Receiving or spending money\n- Farming (gathering berries or honey)\n\n**Required on Shabbat:**\n- Remain indoors (or at a campground in Gen 9) for the full Shabbat period.\n- Feed your Pokémon.\n- Study Torah — it is recommended to study verses and stories regarding animals.\n\n**Gen 9 (Scarlet/Violet):** Let all Pokémon in your party free at a campground from sundown Friday to sundown Saturday. The campground is a private domain, so carrying is permitted there. Playing with Pokémon is permitted if it brings practical benefit (such as joy to the handler).\n\n**Other generations:** Remain inside a specific building (preferably a home or library) for the full Shabbat period.\n\n**Source:** [Shabbat and Animals](https://www.chabad.org/library/article_cdo/aid/522415/jewish/How-does-Shabbat-observance-affect-pet-owners.htm)"
+    },
+
+    {
+      "rule_key": "player_character_age",
+      "category": "Player Character",
+      "sort_order": 700,
+      "title": "Player Character Must Be of Bar/Bat Mitzvah Age",
+      "body": "To be subject to the laws of Judaism, the player character must be at least 12 (female) or 13 (male).\n\n**Clock adjustments required by generation:**\n- **Gen 1 & 7:** Protagonists are 11. Add 2 years to the in-game/device clock before starting.\n- **Gen 2, 4, 6, 8, 9:** Unknown age — assume 11. Add 2 years.\n- **Gen 3:** Protagonists are 12. Female character: no adjustment needed. Male character: add 1 year.\n- **Gen 5 & Legends Arceus:** Protagonists are canonically 13+. No adjustment needed.\n\n**Source:** [Protagonist ages — Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/List_of_character_ages#In_the_core_series_games); clock adjustment suggested by Rav Scott (TikTok: @scottocon)."
+    },
+    {
+      "rule_key": "player_character_dress",
+      "category": "Player Character",
+      "sort_order": 701,
+      "title": "No Cross-Dressing in Character Customization",
+      "body": "The player is forbidden from cross-dressing in-game (Deuteronomy 22:5, Nazir 59a–b). The player character must wear gender-matching clothing and have a gender-matching hairstyle."
+    },
+    {
+      "rule_key": "player_character_no_idolatry",
+      "category": "Player Character",
+      "sort_order": 702,
+      "title": "No Idolatrous Character Customization",
+      "body": "The player is forbidden from using character customization options that imply idolatry.\n\n**Permitted:** 2D pictures of Pokémon or institutional logos.\n\n**Forbidden:** Raised images of faces (e.g., a plastic face on a phone case), or superstitious items such as shrine charms (omamori) — these are considered idolatrous."
+    }
+  ]
+}

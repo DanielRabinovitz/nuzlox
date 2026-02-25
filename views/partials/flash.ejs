@@ -1,0 +1,19 @@
+<%# WCAG §4.1.3 — flash messages via aria-live="polite" region %>
+<div class="flash-region" role="status" aria-live="polite" aria-atomic="false">
+  <% if (flash.success && flash.success.length) { %>
+    <% flash.success.forEach(msg => { %>
+      <div class="flash flash--success" role="alert">
+        <span class="flash__icon" aria-hidden="true">✓</span>
+        <%= msg %>
+      </div>
+    <% }) %>
+  <% } %>
+  <% if (flash.error && flash.error.length) { %>
+    <% flash.error.forEach(msg => { %>
+      <div class="flash flash--error" role="alert">
+        <span class="flash__icon" aria-hidden="true">✕</span>
+        <%= msg %>
+      </div>
+    <% }) %>
+  <% } %>
+</div>

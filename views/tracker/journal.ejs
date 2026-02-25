@@ -1,0 +1,69 @@
+<%# views/tracker/journal.ejs — Journal entries with auto-save %>
+<%# @ref wallbreaker/docs/accessibility/WCAG/02-operable.md §2.2.2 (auto-save status, no flash) %>
+<%# @ref wallbreaker/docs/accessibility/APXpatterns/challenge-patterns.md — Save Early, Save Often %>
+<%# @ref wallbreaker/docs/accessibility/APXpatterns/challenge-patterns.md — Undo Redo (30-day soft delete) %>
+
+<div class="page-container" x-data="journal(<%= playthrough.id %>)" x-init="init()">
+  <p class="breadcrumb">
+    <a href="/tracker">My Playthroughs</a> ›
+    <a href="/tracker/<%= playthrough.id %>"><%= playthrough.title %></a> ›
+    Journal
+  </p>
+  <div class="page-header">
+    <h1 class="page-header__title">Journal</h1>
+    <%# WCAG §2.2.2 — static text update, no flash %>
+    <p class="save-status" id="save-status" role="status" aria-live="polite" x-text="saveStatus"></p>
+  </div>
+
+  <div class="journal-layout">
+    <div class="journal-editor">
+      <div class="form-group">
+        <label for="journal-entry" class="form-label">New entry</label>
+        <textarea
+          id="journal-entry"
+          class="form-textarea form-textarea--journal"
+          rows="10"
+          x-model="draft"
+          @input="scheduleSave()"
+          aria-describedby="save-status"
+          placeholder="What happened today in your run?"
+        ></textarea>
+      </div>
+      <div class="journal-editor__actions">
+        <button type="button" class="btn btn--primary" @click="saveNow()">Save now</button>
+      </div>
+    </div>
+
+    <div class="journal-entries">
+      <h2 class="section-heading">Previous entries</h2>
+      <% if (!journalEvents || journalEvents.length === 0) { %>
+        <p class="journal-entries__empty">No entries yet. Write your first entry above!</p>
+      <% } else { %>
+        <% journalEvents.slice().reverse().forEach(entry => { %>
+          <article class="journal-entry" id="journal-<%= entry.id %>">
+            <header class="journal-entry__header">
+              <time class="journal-entry__time" datetime="<%= entry.created_at %>">
+                <%= new Date(entry.created_at).toLocaleString() %>
+              </time>
+              <%# Undo Redo: soft delete with 30-day restore window %>
+              <button
+                class="btn btn--link btn--small btn--danger"
+                @click="deleteEntry(<%= entry.id %>)"
+                aria-label="Delete this entry (can be restored within 30 days)"
+                type="button"
+              >Delete</button>
+            </header>
+            <div class="journal-entry__body">
+              <%- (entry.data.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') %>
+            </div>
+          </article>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.__JOURNAL_CSRF__ = '<%= csrfToken %>';
+</script>
+<script src="/js/forum.js" defer></script>

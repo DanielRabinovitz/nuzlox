@@ -1,0 +1,43 @@
+<%# views/forum/new-topic.ejs — New topic form %>
+
+<div class="page-container page-container--narrow">
+  <div class="page-header">
+    <p><a href="/forum">← Forum</a></p>
+    <h1 class="page-header__title">Start a New Topic</h1>
+  </div>
+
+  <form method="POST" action="/forum/new" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="form-group">
+      <label for="forum_id" class="form-label">Forum section</label>
+      <select id="forum_id" name="forum_id" class="form-select" required>
+        <option value="">— Choose a section —</option>
+        <% forums.forEach(f => { %>
+          <% if (f.parent_id) { %> <%# Only show sub-forums %>
+            <option value="<%= f.id %>"><%= f.name %></option>
+          <% } %>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="title" class="form-label">Topic title</label>
+      <input type="text" id="title" name="title" class="form-input"
+             required minlength="5" maxlength="255"
+             placeholder="e.g. Is Magikarp allowed in singles battles?">
+    </div>
+
+    <div class="form-group">
+      <label for="content" class="form-label">Opening post</label>
+      <textarea id="content" name="content" class="form-textarea" rows="8"
+                required minlength="10" maxlength="10000"
+                aria-describedby="content-hint"></textarea>
+      <p class="form-hint" id="content-hint">
+        State your question or argument clearly. Cite specific rules where relevant.
+      </p>
+    </div>
+
+    <button type="submit" class="btn btn--primary">Post topic</button>
+  </form>
+</div>

@@ -1,0 +1,33 @@
+<%# views/ruleset/version.ejs — Specific historical ruleset version %>
+
+<div class="page-container">
+  <div class="page-header">
+    <p><a href="/ruleset/history">← Version history</a></p>
+    <h1 class="page-header__title">Ruleset v<%= version.version_label %></h1>
+    <p class="page-header__meta">
+      Published <time datetime="<%= version.published_at %>">
+        <%= new Date(version.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+      </time>
+      <% if (version.is_current) { %><span class="badge badge--current">Current version</span><% } %>
+    </p>
+    <% if (version.changelog) { %>
+      <div class="version-changelog">
+        <strong>Changes:</strong> <%= version.changelog %>
+      </div>
+    <% } %>
+  </div>
+
+  <% for (const [category, rules] of byCategory) { %>
+    <section class="ruleset-section">
+      <h2 class="ruleset-section__heading"><%= category %></h2>
+      <% rules.forEach(rule => { %>
+        <article class="rule-card">
+          <h3 class="rule-card__title"><%= rule.title %></h3>
+          <div class="rule-card__body prose">
+            <%- rule.body.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>') %>
+          </div>
+        </article>
+      <% }) %>
+    </section>
+  <% } %>
+</div>

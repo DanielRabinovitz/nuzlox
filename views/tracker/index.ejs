@@ -1,0 +1,74 @@
+<%# views/tracker/index.ejs — Playthrough list %>
+
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-header__title">My Playthroughs</h1>
+  </div>
+
+  <% const games = [
+    { slug: 'scarlet-violet', label: 'Scarlet / Violet (Gen 9)' },
+    { slug: 'sword-shield',   label: 'Sword / Shield (Gen 8)' },
+    { slug: 'sun-moon',       label: 'Sun / Moon (Gen 7)' },
+    { slug: 'xy',             label: 'X / Y (Gen 6)' },
+    { slug: 'bw',             label: 'Black / White (Gen 5)' },
+    { slug: 'hgss',           label: 'HeartGold / SoulSilver (Gen 4)' },
+    { slug: 'dpp',            label: 'Diamond / Pearl / Platinum (Gen 4)' },
+    { slug: 'rse',            label: 'Ruby / Sapphire / Emerald (Gen 3)' },
+    { slug: 'gsc',            label: 'Gold / Silver / Crystal (Gen 2)' },
+    { slug: 'rby',            label: 'Red / Blue / Yellow (Gen 1)' },
+  ]; %>
+
+  <details class="new-playthrough-form">
+    <summary class="btn btn--primary">+ Start new playthrough</summary>
+    <div class="new-playthrough-form__body">
+      <form method="POST" action="/tracker/new">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group">
+          <label for="game_slug" class="form-label">Game</label>
+          <select id="game_slug" name="game_slug" class="form-select" required>
+            <option value="">— Choose a game —</option>
+            <% games.forEach(g => { %>
+              <option value="<%= g.slug %>"><%= g.label %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="title" class="form-label">Run name</label>
+          <input type="text" id="title" name="title" class="form-input"
+                 required maxlength="150" placeholder="e.g. My first kosher run">
+        </div>
+        <div class="form-group">
+          <label for="youtube_playlist_url" class="form-label">YouTube playlist (optional)</label>
+          <input type="url" id="youtube_playlist_url" name="youtube_playlist_url" class="form-input"
+                 placeholder="https://youtube.com/playlist?list=...">
+        </div>
+        <button type="submit" class="btn btn--primary">Create</button>
+      </form>
+    </div>
+  </details>
+
+  <% if (!playthroughs || playthroughs.length === 0) { %>
+    <div class="notice notice--info">
+      <p>No playthroughs yet. Start one above!</p>
+    </div>
+  <% } else { %>
+    <ul class="playthrough-list" role="list">
+      <% playthroughs.forEach(p => { %>
+        <li class="playthrough-card">
+          <a href="/tracker/<%= p.id %>" class="playthrough-card__link">
+            <div class="playthrough-card__header">
+              <h2 class="playthrough-card__title"><%= p.title %></h2>
+              <span class="badge badge--status-<%= p.status %>"><%= p.status %></span>
+            </div>
+            <p class="playthrough-card__meta">
+              <%= p.game_slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+              &middot; Updated <time datetime="<%= p.updated_at %>">
+                <%= new Date(p.updated_at).toLocaleDateString() %>
+              </time>
+            </p>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>

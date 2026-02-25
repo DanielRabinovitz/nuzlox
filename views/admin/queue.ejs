@@ -1,0 +1,136 @@
+<%# views/admin/queue.ejs — Moderation queue (admin only) %>
+<%# @ref wallbreaker/docs/legal/dsa-compliance.md — DSA Art. 17 (SOR), Art. 20 (appeals) %>
+
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-header__title">Moderation Queue</h1>
+    <p class="page-header__meta"><%= queue.length %> item<%= queue.length === 1 ? '' : 's' %> pending</p>
+  </div>
+
+  <%- include('../partials/flash') %>
+
+  <div class="admin-tabs" role="tablist">
+    <a href="/admin/queue?tab=queue"
+       class="admin-tab <%= tab === 'queue' ? 'admin-tab--active' : '' %>"
+       role="tab" aria-selected="<%= tab === 'queue' %>">Queue</a>
+    <a href="/admin/queue?tab=appeals"
+       class="admin-tab <%= tab === 'appeals' ? 'admin-tab--active' : '' %>"
+       role="tab" aria-selected="<%= tab === 'appeals' %>">Appeals</a>
+    <a href="/admin/queue?tab=blocks"
+       class="admin-tab <%= tab === 'blocks' ? 'admin-tab--active' : '' %>"
+       role="tab" aria-selected="<%= tab === 'blocks' %>">Blocks / Mutes</a>
+  </div>
+
+  <% if (tab === 'queue') { %>
+    <% if (queue.length === 0) { %>
+      <div class="notice notice--success"><p>Queue is clear. Nice work.</p></div>
+    <% } else { %>
+      <ul class="mod-queue" role="list">
+        <% queue.forEach(item => { %>
+          <li class="mod-card" id="mod-<%= item.id %>">
+            <header class="mod-card__header">
+              <span class="badge badge--type"><%= item.content_type %></span>
+              <span class="badge badge--reason"><%= item.reason.replace(/_/g, ' ') %></span>
+              <time datetime="<%= item.created_at %>">
+                <%= new Date(item.created_at).toLocaleString() %>
+              </time>
+            </header>
+            <div class="mod-card__preview">
+              <% if (item.content_type === 'reply' && item.reply) { %>
+                <blockquote class="mod-card__quote">
+                  <%= (item.reply.content || '').slice(0, 500) %><% if ((item.reply.content || '').length > 500) { %>…<% } %>
+                </blockquote>
+                <p class="mod-card__meta">
+                  By <strong><%= item.reply.author_username || '[deleted]' %></strong>
+                  in topic <a href="/forum/<%= item.reply.topic_slug %>#reply-<%= item.reply.id %>">
+                    <%= item.reply.topic_title %>
+                  </a>
+                </p>
+              <% } %>
+            </div>
+            <footer class="mod-card__actions">
+              <%# Approve: dismiss the queue item %>
+              <form method="POST" action="/admin/queue/<%= item.id %>/approve" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn--small btn--success">Approve</button>
+              </form>
+              <%# Remove content %>
+              <form method="POST" action="/admin/queue/<%= item.id %>/remove" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="reason" value="violates_community_standards">
+                <button type="submit" class="btn btn--small btn--danger">Remove</button>
+              </form>
+              <%# Warn user %>
+              <form method="POST" action="/admin/queue/<%= item.id %>/warn" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn--small btn--warning">Warn user</button>
+              </form>
+            </footer>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+
+  <% } else if (tab === 'appeals') { %>
+    <% if (!appeals || appeals.length === 0) { %>
+      <div class="notice notice--info"><p>No open appeals.</p></div>
+    <% } else { %>
+      <ul class="mod-queue" role="list">
+        <% appeals.forEach(appeal => { %>
+          <li class="mod-card">
+            <header class="mod-card__header">
+              <span class="badge">Appeal #<%= appeal.id %></span>
+              <strong><%= appeal.username %></strong>
+              <time datetime="<%= appeal.created_at %>">
+                <%= new Date(appeal.created_at).toLocaleDateString() %>
+              </time>
+            </header>
+            <div class="mod-card__preview">
+              <p><strong>Original action:</strong> <%= appeal.action_type.replace(/_/g, ' ') %></p>
+              <p><strong>Grounds:</strong> <%= appeal.grounds %></p>
+            </div>
+            <footer class="mod-card__actions">
+              <form method="POST" action="/admin/appeals/<%= appeal.id %>/uphold" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn--small btn--success">Uphold appeal</button>
+              </form>
+              <form method="POST" action="/admin/appeals/<%= appeal.id %>/deny" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn--small btn--danger">Deny appeal</button>
+              </form>
+            </footer>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+
+  <% } else if (tab === 'blocks') { %>
+    <% if (!blocks || blocks.length === 0) { %>
+      <div class="notice notice--info"><p>No active blocks or mutes.</p></div>
+    <% } else { %>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User</th><th>Type</th><th>Reason</th><th>Expires</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% blocks.forEach(b => { %>
+            <tr>
+              <td><%= b.username %></td>
+              <td><span class="badge"><%= b.type %></span></td>
+              <td><%= b.reason || '—' %></td>
+              <td><%= b.expires_at ? new Date(b.expires_at).toLocaleDateString() : 'Permanent' %></td>
+              <td>
+                <form method="POST" action="/admin/blocks/<%= b.id %>/lift" style="display:inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn btn--small">Lift</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  <% } %>
+</div>

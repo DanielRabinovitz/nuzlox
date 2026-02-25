@@ -1,0 +1,55 @@
+<%# views/account/appeal.ejs — Appeal a moderation action %>
+<%# @ref wallbreaker/docs/legal/dsa-compliance.md — DSA Art. 20 (appeals mechanism) %>
+
+<div class="page-container page-container--narrow">
+  <div class="page-header">
+    <h1 class="page-header__title">Appeal a Decision</h1>
+    <p class="page-header__meta">
+      Under the EU Digital Services Act (Art. 20), you have the right to appeal moderation actions
+      taken on your content.
+    </p>
+  </div>
+
+  <%- include('../partials/flash') %>
+
+  <% if (action) { %>
+    <div class="notice notice--info">
+      <p><strong>Action:</strong> <%= action.action_type.replace(/_/g, ' ') %>
+         on <%= new Date(action.created_at).toLocaleDateString() %></p>
+      <% if (action.reason) { %><p><strong>Reason given:</strong> <%= action.reason %></p><% } %>
+    </div>
+  <% } %>
+
+  <form method="POST" action="/account/appeal<%= action ? '/' + action.id : '' %>" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <% if (!action) { %>
+      <div class="form-group">
+        <label for="action_id" class="form-label">Action ID</label>
+        <input type="text" id="action_id" name="action_id" class="form-input"
+               required placeholder="e.g. 42"
+               aria-describedby="action-id-hint">
+        <p class="form-hint" id="action-id-hint">
+          The action ID is included in the Statement of Reasons email we sent you.
+        </p>
+      </div>
+    <% } %>
+
+    <div class="form-group">
+      <label for="grounds" class="form-label">Grounds for appeal</label>
+      <textarea id="grounds" name="grounds" class="form-textarea" rows="6"
+                required minlength="20" maxlength="5000"
+                aria-describedby="grounds-hint"></textarea>
+      <p class="form-hint" id="grounds-hint">
+        Explain why you believe the decision was incorrect. Be specific and cite
+        relevant rules or context where possible.
+      </p>
+    </div>
+
+    <button type="submit" class="btn btn--primary">Submit appeal</button>
+  </form>
+
+  <p class="form-hint" style="margin-top: 1rem;">
+    Appeals are reviewed within 14 days. You will receive an email with the outcome.
+    <%# @ref wallbreaker/docs/legal/dsa-compliance.md — Art. 20 response timeline %>
+  </p>
+</div>

@@ -1,0 +1,29 @@
+<%# views/ruleset/history.ejs — Ruleset version archive %>
+
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-header__title">Ruleset Version History</h1>
+    <p><a href="/ruleset">← Current ruleset</a></p>
+  </div>
+
+  <% if (!versions || versions.length === 0) { %>
+    <p>No versions published yet.</p>
+  <% } else { %>
+    <ul class="version-list" role="list">
+      <% versions.forEach(v => { %>
+        <li class="version-list__item">
+          <a href="/ruleset/<%= v.id %>" class="version-list__link">
+            Version <%= v.version_label %>
+            <% if (v.is_current) { %><span class="badge badge--current">Current</span><% } %>
+          </a>
+          <time class="version-list__date" datetime="<%= v.published_at %>">
+            <%= new Date(v.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+          </time>
+          <% if (v.changelog) { %>
+            <p class="version-list__changelog"><%= v.changelog %></p>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>

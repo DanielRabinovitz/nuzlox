@@ -1,0 +1,97 @@
+<%# views/auth/register.ejs — Registration form with age gate %>
+<%# @ref wallbreaker/docs/legal/child-safety.md § COPPA — Age Gate / Neutral Age Screen %>
+<%# @ref wallbreaker/docs/accessibility/WCAG/03-understandable.md §3.3.2 (explicit labels) %>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <h1 class="auth-card__title">Create Account</h1>
+    <p class="auth-card__subtitle">Join Nuzlox — free, no subscription.</p>
+
+    <form method="POST" action="/register" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email address <span aria-label="required">*</span></label>
+        <input type="email" id="email" name="email" class="form-input"
+               autocomplete="email" required maxlength="255">
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password <span aria-label="required">*</span></label>
+        <input type="password" id="password" name="password" class="form-input"
+               autocomplete="new-password" required minlength="8" maxlength="128">
+        <p class="form-hint" id="pw-hint">At least 8 characters.</p>
+      </div>
+
+      <%#
+        COPPA §Age Gate: collect full date of birth as three separate selects.
+        Labels are neutral — no hint as to the "correct" answer.
+        @ref wallbreaker/docs/legal/child-safety.md § COPPA — Age Gate
+      %>
+      <fieldset class="form-group">
+        <legend class="form-label">Date of birth <span aria-label="required">*</span></legend>
+        <p class="form-hint" id="dob-hint">
+          We use your date of birth to confirm you meet the minimum age to register.
+          We do not share it.
+        </p>
+        <div class="dob-row" aria-describedby="dob-hint">
+          <div class="dob-row__field">
+            <label for="dob_month" class="form-label form-label--small">Month</label>
+            <select id="dob_month" name="dob_month" class="form-select" required>
+              <option value="">—</option>
+              <% const months = ['January','February','March','April','May','June',
+                                 'July','August','September','October','November','December'];
+                 months.forEach((m, i) => { %>
+                <option value="<%= i+1 %>"><%= m %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="dob-row__field">
+            <label for="dob_day" class="form-label form-label--small">Day</label>
+            <select id="dob_day" name="dob_day" class="form-select" required>
+              <option value="">—</option>
+              <% for (let d = 1; d <= 31; d++) { %>
+                <option value="<%= d %>"><%= d %></option>
+              <% } %>
+            </select>
+          </div>
+          <div class="dob-row__field">
+            <label for="dob_year" class="form-label form-label--small">Year</label>
+            <select id="dob_year" name="dob_year" class="form-select" required>
+              <option value="">—</option>
+              <% const thisYear = new Date().getFullYear();
+                 for (let y = thisYear; y >= thisYear - 100; y--) { %>
+                <option value="<%= y %>"><%= y %></option>
+              <% } %>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <%# ToS consent — required, unchecked by default %>
+      <div class="form-group form-group--checkbox">
+        <input type="checkbox" id="tos" name="tos" value="1" required class="form-checkbox">
+        <label for="tos" class="form-label form-label--checkbox">
+          I agree to the <a href="/legal/terms" target="_blank" rel="noopener">Terms of Service</a>
+          and <a href="/legal/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+          <span aria-label="required">*</span>
+        </label>
+      </div>
+
+      <%# Marketing opt-in — optional, unchecked by default, separate from ToS %>
+      <%# @ref wallbreaker/docs/legal/email-and-marketing.md %>
+      <div class="form-group form-group--checkbox">
+        <input type="checkbox" id="marketing_opt_in" name="marketing_opt_in" value="1" class="form-checkbox">
+        <label for="marketing_opt_in" class="form-label form-label--checkbox">
+          I'd like to receive occasional updates and news from Wallbreaker (optional).
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--full">Create account</button>
+    </form>
+
+    <p class="auth-card__alt">
+      Already have an account? <a href="/login">Log in</a>
+    </p>
+  </div>
+</div>

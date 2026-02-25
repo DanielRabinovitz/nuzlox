@@ -1,0 +1,91 @@
+<%# views/tracker/detail.ejs — Single playthrough view %>
+<%# @ref wallbreaker/docs/accessibility/APXpatterns/challenge-patterns.md — Total Recall (persistent sidebar) %>
+<%# @ref wallbreaker/docs/accessibility/WCAG/03-understandable.md §3.3.4 (faint confirmation modal) %>
+
+<div class="page-container page-container--with-sidebar">
+  <div class="tracker-main">
+    <p class="breadcrumb"><a href="/tracker">← My Playthroughs</a></p>
+    <div class="page-header">
+      <h1 class="page-header__title"><%= playthrough.title %></h1>
+      <p class="page-header__meta">
+        <%= playthrough.game_slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %>
+        &middot; <span class="badge badge--status-<%= playthrough.status %>"><%= playthrough.status %></span>
+      </p>
+      <% if (playthrough.youtube_playlist_url) { %>
+        <p>
+          <a href="<%= playthrough.youtube_playlist_url %>" target="_blank" rel="noopener noreferrer">
+            Watch playlist on YouTube →
+          </a>
+        </p>
+      <% } %>
+    </div>
+
+    <% if (checkpoints && checkpoints.length > 0) { %>
+      <section class="checkpoints-section" aria-labelledby="checkpoints-heading">
+        <h2 class="section-heading" id="checkpoints-heading">Story Checkpoints</h2>
+        <ul class="checkpoint-list" role="list">
+          <% const completedIds = events
+               .filter(e => e.event_type === 'checkpoint')
+               .map(e => e.data.checkpoint_id); %>
+          <% checkpoints.forEach(cp => { %>
+            <% const done = completedIds.includes(cp.id); %>
+            <li class="checkpoint-item <%= done ? 'checkpoint-item--done' : '' %>">
+              <span class="checkpoint-item__icon" aria-hidden="true"><%= done ? '✓' : '○' %></span>
+              <div>
+                <strong class="checkpoint-item__label"><%= cp.label %></strong>
+                <p class="checkpoint-item__desc"><%= cp.description %></p>
+              </div>
+              <% if (!done) { %>
+                <form method="POST" action="/api/v1/tracker/<%= playthrough.id %>/event" style="display:inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="event_type" value="checkpoint">
+                  <input type="hidden" name="data" value='<%= JSON.stringify({ checkpoint_id: cp.id, label: cp.label }) %>'>
+                  <button type="submit" class="btn btn--small">Mark complete</button>
+                </form>
+              <% } %>
+            </li>
+          <% }) %>
+        </ul>
+      </section>
+    <% } %>
+
+    <section class="actions-section">
+      <h2 class="section-heading">Quick Actions</h2>
+      <div class="action-row">
+        <a href="/tracker/<%= playthrough.id %>/journal" class="btn btn--primary">Open Journal</a>
+        <a href="/teambuilder" class="btn btn--secondary">Teambuilder</a>
+      </div>
+    </section>
+  </div>
+
+  <%# Total Recall sidebar — current team visible without leaving the page %>
+  <%# @ref wallbreaker/docs/accessibility/APXpatterns/challenge-patterns.md — Total Recall %>
+  <aside class="tracker-sidebar" aria-label="Current team">
+    <h2 class="tracker-sidebar__heading">Current Party</h2>
+    <% if (!playthrough.current_team || playthrough.current_team.length === 0) { %>
+      <p class="tracker-sidebar__empty">No Pokémon in party yet.</p>
+    <% } else { %>
+      <ul class="party-list" role="list">
+        <% playthrough.current_team.forEach(mon => { %>
+          <li class="party-list__item party-list__item--<%= mon.status || 'active' %>">
+            <span class="party-list__name"><%= mon.nickname || mon.species %></span>
+            <% if (mon.nickname) { %>
+              <span class="party-list__species">(<%= mon.species %>)</span>
+            <% } %>
+            <span class="party-list__status badge badge--<%= mon.status || 'active' %>">
+              <%= mon.status || 'active' %>
+            </span>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+
+    <% const lastCheckpointEvent = events.filter(e => e.event_type === 'checkpoint').pop(); %>
+    <% if (lastCheckpointEvent) { %>
+      <div class="tracker-sidebar__checkpoint">
+        <strong>Last checkpoint:</strong>
+        <%= lastCheckpointEvent.data.label %>
+      </div>
+    <% } %>
+  </aside>
+</div>
