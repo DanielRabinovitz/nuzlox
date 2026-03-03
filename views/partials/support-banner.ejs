@@ -1,0 +1,52 @@
+<%# views/partials/support-banner.ejs
+    Dismissible sitewide support banner.
+    Dismiss state stored in localStorage ('supportBannerDismissed').
+    WCAG: each link has aria-label; banner has role="complementary";
+    dismiss button has aria-label.
+%>
+<div
+  id="support-banner"
+  class="support-banner"
+  x-data="{ show: !localStorage.getItem('supportBannerDismissed') }"
+  x-show="show"
+  x-cloak
+  role="complementary"
+  aria-label="Support the project"
+>
+  <div class="support-banner__inner">
+    <span class="support-banner__message">Support Nuzlox &amp; Wallbreaker:</span>
+
+    <nav class="support-banner__links" aria-label="Support links">
+      <a href="https://www.tiktok.com/@swanksinatra.1"
+         class="support-banner__link"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="TikTok (opens in new tab)">TikTok</a>
+
+      <a href="https://www.youtube.com/@swanksinatra.1"
+         class="support-banner__link"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="YouTube (opens in new tab)">YouTube</a>
+
+      <a href="https://patreon.com/SwankSinatra662"
+         class="support-banner__link"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="Patreon (opens in new tab)">Patreon</a>
+
+      <a href="https://discord.gg/zfnyh45VaN"
+         class="support-banner__link"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="Discord (opens in new tab)">Discord</a>
+
+      <a href="https://wallbreaker.net"
+         class="support-banner__link"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="Wallbreaker.net (opens in new tab)">Wallbreaker.net</a>
+    </nav>
+
+    <button
+      class="support-banner__dismiss"
+      @click="localStorage.setItem('supportBannerDismissed', '1'); show = false"
+      aria-label="Dismiss support banner"
+    >&times;</button>
+  </div>
+</div>

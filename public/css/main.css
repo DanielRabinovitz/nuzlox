@@ -1096,3 +1096,61 @@ main { flex: 1; padding: 2rem 1rem; }
 
 .ruleset-footer { margin-top: 1.5rem; color: var(--color-text-muted); font-size: .9rem; }
 .ruleset-footer p { margin-bottom: .4rem; }
+
+/* ── Support banner ───────────────────────────────────────────────────────── */
+.support-banner {
+  background: var(--color-accent, #1a73e8);
+  color: #fff;
+  font-size: 0.875rem;
+}
+
+.support-banner__inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+}
+
+.support-banner__message {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.support-banner__links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.support-banner__link {
+  color: #fff;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.support-banner__link:hover,
+.support-banner__link:focus {
+  opacity: 0.85;
+}
+
+.support-banner__dismiss {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.support-banner__dismiss:hover,
+.support-banner__dismiss:focus {
+  background: rgba(255, 255, 255, 0.2);
+  outline: 2px solid #fff;
+}
