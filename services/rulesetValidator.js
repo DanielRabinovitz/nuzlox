@@ -30,7 +30,8 @@ function validateMon(mon, schema) {
     forbidden_secondary_effects  = [],
   } = schema;
   const norm = n => (n || '').toLowerCase().replace(/-/g, '');
-  const normalizedForbiddenMoves = forbidden_moves.map(norm);
+  const normalizedForbiddenMoves   = forbidden_moves.map(norm);
+  const normalizedForbiddenSpecies = forbidden_species.map(norm);
   const secondaryEffectSet = new Set(forbidden_secondary_effects);
 
   // ── Types ──────────────────────────────────────────────────────────────
@@ -47,8 +48,7 @@ function validateMon(mon, schema) {
   if (mon.is_fossil)    warnings.push('Fossil Pokémon may be forbidden (verify)');
 
   // ── Forbidden species ─────────────────────────────────────────────────
-  const monName = (mon.name || '').toLowerCase();
-  if (forbidden_species.map(s => s.toLowerCase()).includes(monName)) {
+  if (normalizedForbiddenSpecies.includes(norm(mon.name))) {
     violations.push(`${mon.name} is a forbidden species`);
   }
 

@@ -312,8 +312,8 @@ describe('forbidden species', () => {
   });
 });
 
-describe('substitute exemption', () => {
-  test('substitute is not a forbidden move', () => {
+describe('allowed move — substitute', () => {
+  test('substitute is not flagged as forbidden', () => {
     const { violations } = validateMon(
       { name: 'eevee', types: ['normal'], moves: [{ name: 'substitute', type: 'normal' }] },
       SCHEMA
