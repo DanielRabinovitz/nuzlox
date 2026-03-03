@@ -23,3 +23,11 @@ describe('POST /bugs/report', () => {
     expect(res.headers.location).toMatch(/login/);
   });
 });
+
+describe('GET /bugs/report redirect contains next param', () => {
+  test('redirect location includes encoded return path', async () => {
+    const res = await request(app).get('/bugs/report');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toMatch(/next=/);
+  });
+});
