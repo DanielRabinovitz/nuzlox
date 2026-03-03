@@ -280,3 +280,44 @@ describe('validateTeam', () => {
     expect(result.violations[0]).toMatch(/haunter/i);
   });
 });
+
+describe('forbidden species', () => {
+  const schemaWithSpecies = {
+    ...SCHEMA,
+    forbidden_species: ['cubone'],
+  };
+
+  test('flags cubone by name', () => {
+    const { violations } = validateMon(
+      { name: 'cubone', types: ['ground'], moves: [] },
+      schemaWithSpecies
+    );
+    expect(violations.some(v => /cubone/i.test(v))).toBe(true);
+  });
+
+  test('passes a legal species', () => {
+    const { violations } = validateMon(
+      { name: 'gogoat', types: ['grass'], moves: [] },
+      schemaWithSpecies
+    );
+    expect(violations).toHaveLength(0);
+  });
+
+  test('is case-insensitive', () => {
+    const { violations } = validateMon(
+      { name: 'Cubone', types: ['ground'], moves: [] },
+      schemaWithSpecies
+    );
+    expect(violations.some(v => /cubone/i.test(v))).toBe(true);
+  });
+});
+
+describe('substitute exemption', () => {
+  test('substitute is not a forbidden move', () => {
+    const { violations } = validateMon(
+      { name: 'eevee', types: ['normal'], moves: [{ name: 'substitute', type: 'normal' }] },
+      SCHEMA
+    );
+    expect(violations.filter(v => /substitute/i.test(v))).toHaveLength(0);
+  });
+});

@@ -23,6 +23,7 @@ function validateMon(mon, schema) {
     forbidden_types              = [],
     restricted_types             = {},
     forbidden_species_categories = [],
+    forbidden_species            = [],   // named species list
     forbidden_moves              = [],
     forbidden_move_categories    = [],
     forbidden_items              = [],
@@ -44,6 +45,12 @@ function validateMon(mon, schema) {
   if (mon.is_legendary) violations.push('Legendary Pokémon are forbidden');
   if (mon.is_mythical)  violations.push('Mythical Pokémon are forbidden');
   if (mon.is_fossil)    warnings.push('Fossil Pokémon may be forbidden (verify)');
+
+  // ── Forbidden species ─────────────────────────────────────────────────
+  const monName = (mon.name || '').toLowerCase();
+  if (forbidden_species.map(s => s.toLowerCase()).includes(monName)) {
+    violations.push(`${mon.name} is a forbidden species`);
+  }
 
   // ── Moves ──────────────────────────────────────────────────────────────
   for (const move of (mon.moves || [])) {
