@@ -246,3 +246,15 @@ CREATE INDEX IF NOT EXISTS idx_reports_status      ON nuzlox_reports(status);
 CREATE INDEX IF NOT EXISTS idx_dsr_deadline        ON nuzlox_dsr_requests(deadline_at);
 CREATE INDEX IF NOT EXISTS idx_dsr_status          ON nuzlox_dsr_requests(status);
 CREATE INDEX IF NOT EXISTS idx_relationships_user  ON nuzlox_user_relationships(user_id);
+
+-- nuzlox_bug_reports
+CREATE TABLE IF NOT EXISTS nuzlox_bug_reports (
+  id                INTEGER  PRIMARY KEY AUTOINCREMENT,
+  user_id           INTEGER  NOT NULL,
+  title             TEXT     NOT NULL,
+  description       TEXT     NOT NULL,
+  url_reported_on   TEXT,
+  github_issue_url  TEXT     DEFAULT NULL,
+  created_at        TEXT     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_bug_reports_user ON nuzlox_bug_reports(user_id);
