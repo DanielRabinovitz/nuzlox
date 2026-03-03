@@ -17,7 +17,11 @@ const github      = require('../services/github');
 const BugSchema = z.object({
   title:           z.string().min(5).max(255),
   description:     z.string().min(10).max(5000),
-  url_reported_on: z.string().max(512).optional(),
+  url_reported_on: z.string().max(512)
+    .refine(v => !v || v.startsWith('http://') || v.startsWith('https://'), {
+      message: 'URL must start with http:// or https://',
+    })
+    .optional(),
 });
 
 router.get('/report', requireAuth, (req, res) => {

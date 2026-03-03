@@ -92,10 +92,13 @@ app.use((err, req, res, next) => {
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Nuzlox running on http://localhost:${PORT} [${process.env.NODE_ENV || 'development'}]`);
-  cron.start();
-});
+// Guard so that requiring this module in tests does not bind a real port.
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Nuzlox running on http://localhost:${PORT} [${process.env.NODE_ENV || 'development'}]`);
+    cron.start();
+  });
+}
 
 module.exports = app; // exported for testing
