@@ -22,8 +22,7 @@
         "future-sight",
         "extrasensory",
         "luster-purge",
-        "mist-ball",
-        "power-gem"
+        "mist-ball"
       ],
       "note": "Only defensive/healing psychic moves are permitted."
     },
@@ -119,7 +118,6 @@
     "snap-trap",
     "thunder-cage",
     "imposter",
-    "substitute",
     "curse",
     "close-combat",
     "overheat",
@@ -127,7 +125,9 @@
     "leaf-storm",
     "superpower",
     "psycho-boost",
-    "power-whip"
+    "power-whip",
+    "power-split",
+    "guard-swap"
   ],
   "forbidden_move_categories": [
     "ghost",
@@ -165,12 +165,12 @@
     "odd-keystone",
     "cleanse-tag",
     "sausages",
-    "bread",
-    "peanut-butter",
-    "marmalade",
     "klawf-stick",
     "smoked-fillet",
     "bitter-herba-mystica"
+  ],
+  "forbidden_species": [
+    "cubone"
   ],
   "breeding_required": true,
   "breeding_note": "Catch 2 wild Pokémon of the species, breed for team member. Wild-caught Pokémon may not be used directly on a team.",
