@@ -12,6 +12,7 @@ const teambuilderRoutes = require('./teambuilder');
 const forumRoutes      = require('./forum');
 const trackerRoutes    = require('./tracker');
 const accountRoutes    = require('./account');
+const bugsRoutes       = require('./bugs');
 const apiTeams         = require('./api/teams');
 const apiForum         = require('./api/forum');
 const apiTracker       = require('./api/tracker');
@@ -25,6 +26,7 @@ module.exports = function mountRoutes(app) {
   app.use('/forum',      forumRoutes);
   app.use('/tracker',    trackerRoutes);
   app.use('/account',    accountRoutes);
+  app.use('/bugs',       bugsRoutes);
   app.use('/api/v1/teams',      apiTeams);
   app.use('/api/v1/forum',      apiForum);
   app.use('/api/v1/tracker',    apiTracker);
