@@ -23,6 +23,8 @@ async function setGithubUrl(id, githubIssueUrl) {
   );
 }
 
+// TODO: used by future admin queue view — route must use requireAdmin middleware
+//       as this JOIN exposes username (PII-linked).
 async function getAll({ limit = 50, offset = 0 } = {}) {
   return db.all(
     `SELECT br.*, u.username

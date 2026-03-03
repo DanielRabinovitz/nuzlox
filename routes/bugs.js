@@ -10,9 +10,10 @@
 const express     = require('express');
 const router      = express.Router();
 const { z }       = require('zod');
-const requireAuth = require('../middleware/requireAuth');
-const BugReport   = require('../models/BugReport');
-const github      = require('../services/github');
+const requireAuth             = require('../middleware/requireAuth');
+const { reportLimiter }       = require('../middleware/rateLimiter');
+const BugReport               = require('../models/BugReport');
+const github                  = require('../services/github');
 
 const BugSchema = z.object({
   title:           z.string().min(5).max(255),
@@ -35,7 +36,7 @@ router.get('/report', requireAuth, (req, res) => {
   });
 });
 
-router.post('/report', requireAuth, async (req, res, next) => {
+router.post('/report', requireAuth, reportLimiter, async (req, res, next) => {
   try {
     const parsed = BugSchema.safeParse(req.body);
     if (!parsed.success) {
