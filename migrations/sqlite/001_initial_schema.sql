@@ -250,7 +250,7 @@ CREATE INDEX IF NOT EXISTS idx_relationships_user  ON nuzlox_user_relationships(
 -- nuzlox_bug_reports
 CREATE TABLE IF NOT EXISTS nuzlox_bug_reports (
   id                INTEGER  PRIMARY KEY AUTOINCREMENT,
-  user_id           INTEGER  NOT NULL,
+  user_id           INTEGER  NOT NULL REFERENCES users(id),
   title             TEXT     NOT NULL,
   description       TEXT     NOT NULL,
   url_reported_on   TEXT,
