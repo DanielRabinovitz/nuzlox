@@ -8,12 +8,12 @@
 const db = require('../config/database');
 
 async function create({ userId, title, description, urlReportedOn }) {
-  const result = await db.run(
+  const { lastId } = await db.run(
     `INSERT INTO nuzlox_bug_reports (user_id, title, description, url_reported_on)
      VALUES (?, ?, ?, ?)`,
     [userId, title, description, urlReportedOn || null]
   );
-  return result.lastId ?? result.insertId;
+  return lastId;
 }
 
 async function setGithubUrl(id, githubIssueUrl) {

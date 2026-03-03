@@ -296,18 +296,18 @@ CREATE TABLE IF NOT EXISTS nuzlox_blocks (
   CONSTRAINT fk_blocks_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-SET FOREIGN_KEY_CHECKS = 1;
-
 -- ─── nuzlox_bug_reports ─────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS nuzlox_bug_reports (
   id                BIGINT        NOT NULL AUTO_INCREMENT,
   user_id           BIGINT        NOT NULL,
   title             VARCHAR(255)  NOT NULL,
   description       TEXT          NOT NULL,
-  url_reported_on   VARCHAR(512),
-  github_issue_url  VARCHAR(512)  DEFAULT NULL,
+  url_reported_on   TEXT,
+  github_issue_url  VARCHAR(255)  DEFAULT NULL,
   created_at        TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   KEY idx_bug_reports_user (user_id),
   CONSTRAINT fk_bug_reports_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SET FOREIGN_KEY_CHECKS = 1;
