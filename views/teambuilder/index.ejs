@@ -5,7 +5,7 @@
 
 <script id="teambuilder-data" type="application/json"><%- teamData %></script>
 
-<div class="page-container" x-data="teambuilder()" x-init="init()">
+<div class="page-container" x-data="teambuilder()" x-init="init()" x-cloak>
 
   <div class="page-header">
     <h1 class="page-header__title">Teambuilder</h1>
@@ -23,33 +23,175 @@
   </div>
 
   <div class="teambuilder-layout">
-    <div class="teambuilder-slots" role="group" aria-label="Your team (6 slots)">
-      <template x-for="(slot, index) in team" :key="index">
-        <div class="slot-card" :class="{ 'slot-card--filled': slot.species, 'slot-card--invalid': slot.violations?.length }">
-          <div class="slot-card__header">
-            <span class="slot-card__number" aria-label="Slot" x-text="index + 1"></span>
-            <span class="slot-card__species" x-text="slot.species || 'Empty'"></span>
-          </div>
 
-          <% /* WCAG §2.5.7 — keyboard alternative to drag: "Change" button opens search dropdown */ %>
-          <div class="slot-card__controls">
+    <%# ── Six slot cards ─────────────────────────────────────────────────── %>
+    <div class="team-grid" role="group" aria-label="Your team (6 slots)">
+      <template x-for="(slot, index) in team" :key="index">
+        <div
+          class="slot-card"
+          :class="{
+            'slot-card--filled':  slot.species,
+            'slot-card--invalid': slot.violations && slot.violations.length > 0,
+            'slot-card--loading': slot.loading
+          }"
+        >
+          <%# Header: sprite + name + clear ──────────────────────────────── %>
+          <div class="slot-card__header">
+            <div class="slot-card__sprite-wrap">
+              <img
+                x-show="slot.sprite"
+                :src="slot.sprite"
+                :alt="slot.species"
+                class="slot-card__sprite"
+                width="64" height="64"
+                loading="lazy"
+              >
+              <div
+                x-show="!slot.sprite && !slot.loading"
+                class="slot-card__sprite-empty"
+                aria-hidden="true"
+                x-text="index + 1"
+              ></div>
+              <div x-show="slot.loading" class="slot-card__sprite-loading" aria-hidden="true">
+                <span class="spinner"></span>
+              </div>
+            </div>
+
+            <div class="slot-card__identity">
+              <span
+                class="slot-card__species"
+                x-text="slot.species ? (slot.nickname || slot.species) : ('Slot ' + (index+1))"
+              ></span>
+              <span
+                x-show="slot.species && slot.nickname"
+                class="slot-card__nickname"
+                x-text="slot.species"
+              ></span>
+              <div class="slot-card__types" x-show="slot.types && slot.types.length">
+                <template x-for="t in (slot.types || [])" :key="t">
+                  <span
+                    class="type-badge"
+                    :class="'type-badge--' + t.toLowerCase()"
+                    x-text="t"
+                  ></span>
+                </template>
+              </div>
+            </div>
+
             <button
-              class="btn btn--small"
-              @click="openPicker(index)"
-              :aria-label="'Choose Pokémon for slot ' + (index + 1)"
-              type="button"
-            >Change</button>
-            <button
-              class="btn btn--small btn--danger"
+              class="btn btn--small btn--danger slot-card__clear"
               @click="clearSlot(index)"
-              :aria-label="'Clear slot ' + (index + 1)"
               x-show="slot.species"
               type="button"
+              :aria-label="'Remove ' + slot.species + ' from slot ' + (index + 1)"
             >✕</button>
           </div>
 
-          <div class="slot-card__violations" x-show="slot.violations?.length" role="alert">
-            <template x-for="v in (slot.violations || [])" :key="v">
+          <%# Add button (empty slot) ──────────────────────────────────────── %>
+          <div x-show="!slot.species" class="slot-card__add">
+            <button
+              class="btn btn--primary btn--full"
+              @click="openPicker(index)"
+              type="button"
+              :aria-label="'Choose Pokémon for slot ' + (index + 1)"
+            >+ Add Pokémon</button>
+          </div>
+
+          <%# Change button (filled slot) ─────────────────────────────────── %>
+          <div x-show="slot.species" class="slot-card__change">
+            <button
+              class="btn btn--secondary btn--small btn--full"
+              @click="openPicker(index)"
+              type="button"
+            >Change</button>
+          </div>
+
+          <%# Nickname & held item ─────────────────────────────────────────── %>
+          <template x-if="slot.species">
+            <div class="slot-card__details">
+              <div class="form-group" style="margin-bottom:.5rem">
+                <label :for="'nick-'+index" class="form-label" style="font-size:.75rem">Nickname</label>
+                <input
+                  type="text"
+                  :id="'nick-'+index"
+                  class="form-input"
+                  style="font-size:.82rem;padding:.3rem .55rem"
+                  x-model="slot.nickname"
+                  @input="validateTeam()"
+                  placeholder="Optional"
+                  maxlength="12"
+                >
+              </div>
+              <div class="form-group" style="margin-bottom:.5rem">
+                <label :for="'item-'+index" class="form-label" style="font-size:.75rem">Held item</label>
+                <input
+                  type="text"
+                  :id="'item-'+index"
+                  class="form-input"
+                  style="font-size:.82rem;padding:.3rem .55rem"
+                  x-model="slot.held_item"
+                  @input="validateTeam()"
+                  placeholder="e.g. Leftovers"
+                  maxlength="40"
+                >
+              </div>
+            </div>
+          </template>
+
+          <%# Move slots (4) ───────────────────────────────────────────────── %>
+          <template x-if="slot.species">
+            <div class="slot-card__moves" role="group" :aria-label="'Moves for ' + slot.species">
+              <template x-for="mi in [0,1,2,3]" :key="mi">
+                <button
+                  class="move-slot"
+                  :class="{
+                    'move-slot--filled':    slot.moves[mi] !== null,
+                    'move-slot--forbidden': slot.moves[mi] && slot.moves[mi].isForbidden
+                  }"
+                  @click="openMovePicker(index, mi)"
+                  type="button"
+                  :aria-label="slot.moves[mi] ? ('Move ' + (mi+1) + ': ' + (slot.moves[mi].displayName || slot.moves[mi].name)) : ('Add move ' + (mi+1))"
+                >
+                  <span x-show="!slot.moves[mi]" class="move-slot__empty">
+                    + Move <span x-text="mi+1"></span>
+                  </span>
+                  <template x-if="slot.moves[mi]">
+                    <span class="move-slot__content">
+                      <span class="move-slot__name" x-text="slot.moves[mi].displayName || slot.moves[mi].name"></span>
+                      <span class="move-slot__badges">
+                        <template x-if="slot.moves[mi].type">
+                          <span
+                            class="type-badge type-badge--sm"
+                            :class="'type-badge--' + slot.moves[mi].type"
+                            x-text="slot.moves[mi].type"
+                          ></span>
+                        </template>
+                        <template x-if="slot.moves[mi].damage_class">
+                          <span
+                            class="move-category"
+                            :class="'move-category--' + slot.moves[mi].damage_class"
+                            x-text="slot.moves[mi].damage_class.charAt(0).toUpperCase()"
+                            :title="slot.moves[mi].damage_class"
+                          ></span>
+                        </template>
+                        <template x-if="slot.moves[mi].power">
+                          <span class="move-slot__stat" x-text="slot.moves[mi].power + 'pw'"></span>
+                        </template>
+                      </span>
+                    </span>
+                  </template>
+                </button>
+              </template>
+            </div>
+          </template>
+
+          <%# Per-slot violations ──────────────────────────────────────────── %>
+          <div
+            class="slot-card__violations"
+            x-show="slot.violations && slot.violations.length"
+            role="alert"
+          >
+            <template x-for="(v, vi) in (slot.violations || [])" :key="vi">
               <p class="violation-msg" x-text="v"></p>
             </template>
           </div>
@@ -57,85 +199,137 @@
       </template>
     </div>
 
+    <%# ── Sidebar ─────────────────────────────────────────────────────────── %>
     <div class="teambuilder-sidebar">
-      <%# WCAG §4.1.3 — validation result announced via aria-live %>
-      <div class="validation-panel" role="status" aria-live="polite" aria-atomic="true">
-        <h2 class="validation-panel__heading">Validation</h2>
-        <div class="validation-panel__status"
-             :class="{ 'status--valid': isValid, 'status--invalid': !isValid && hasTeam, 'status--empty': !hasTeam }">
-          <span class="status__icon" aria-hidden="true" x-text="hasTeam ? (isValid ? '✓' : '✕') : '○'"></span>
-          <span class="status__label"
-                x-text="!hasTeam ? 'Add Pokémon to validate' : (isValid ? 'Team is kosher!' : 'Team has violations')">
-          </span>
+
+      <%# Validation panel — aria-live for screen readers %>
+      <div
+        class="validation-panel"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <h2 class="validation-panel__title">Validation</h2>
+
+        <div
+          class="validation-panel__status"
+          :class="{
+            'validation-panel__status--valid':   isValid,
+            'validation-panel__status--invalid': !isValid && hasTeam,
+            'validation-panel__status--empty':   !hasTeam
+          }"
+        >
+          <span aria-hidden="true" x-text="hasTeam ? (isValid ? '✓' : '✕') : '○'"></span>
+          <span x-text="!hasTeam ? 'Add Pokémon to validate' : (isValid ? 'Team is kosher!' : 'Team has violations')"></span>
         </div>
+
         <ul class="violation-list" x-show="violations.length" role="list" aria-label="Violations">
-          <template x-for="v in violations" :key="v">
-            <li class="violation-list__item" x-text="v"></li>
+          <template x-for="(v, vi) in violations" :key="vi">
+            <li class="violation-item violation-item--error">
+              <span class="violation-item__icon" aria-hidden="true">✕</span>
+              <span x-text="v"></span>
+            </li>
           </template>
         </ul>
-        <ul class="warning-list" x-show="warnings.length" role="list" aria-label="Warnings">
-          <template x-for="w in warnings" :key="w">
-            <li class="warning-list__item" x-text="w"></li>
+
+        <ul class="violation-list" x-show="warnings.length" role="list" aria-label="Warnings">
+          <template x-for="(w, wi) in warnings" :key="wi">
+            <li class="violation-item violation-item--warning">
+              <span class="violation-item__icon" aria-hidden="true">⚠</span>
+              <span x-text="w"></span>
+            </li>
           </template>
         </ul>
       </div>
 
+      <%# Save panel (auth users) %>
       <% if (currentUser) { %>
         <div class="save-panel">
           <h2 class="save-panel__heading">Save Team</h2>
           <div class="form-group">
             <label for="team-name" class="form-label">Team name</label>
-            <input type="text" id="team-name" class="form-input" x-model="teamName" maxlength="100"
-                   placeholder="My kosher team">
+            <input
+              type="text"
+              id="team-name"
+              class="form-input"
+              x-model="teamName"
+              maxlength="100"
+              placeholder="My kosher team"
+            >
           </div>
-          <button class="btn btn--primary" @click="saveTeam()" :disabled="!hasTeam" type="button">
-            Save team
-          </button>
-          <p class="save-status" x-show="saveStatus" x-text="saveStatus" aria-live="polite"></p>
+          <button
+            class="btn btn--primary btn--full"
+            @click="saveTeam()"
+            :disabled="!hasTeam"
+            type="button"
+          >Save team</button>
+          <p
+            class="save-status"
+            x-show="saveStatus"
+            x-text="saveStatus"
+            aria-live="polite"
+          ></p>
         </div>
       <% } else { %>
-        <div class="save-panel save-panel--guest">
-          <p>
+        <div class="save-panel">
+          <p style="font-size:.875rem;color:var(--color-text-muted)">
             <a href="/register">Sign up</a> to save teams permanently.
             Your current team is auto-saved in your browser.
           </p>
         </div>
       <% } %>
 
+      <%# Saved teams list (auth users) %>
       <% if (currentUser) { %>
         <div class="saved-teams-panel" x-show="savedTeams.length">
-          <h2 class="saved-teams-panel__heading">Saved Teams</h2>
-          <ul role="list">
+          <h2 class="saved-panel__heading" style="font-size:.95rem;font-weight:700;margin-bottom:.75rem">Saved Teams</h2>
+          <ul role="list" style="list-style:none">
             <template x-for="t in savedTeams" :key="t.id">
               <li class="saved-team-item">
-                <button class="btn btn--link" @click="loadTeam(t)" type="button">
+                <button
+                  class="btn btn--link saved-team-item__btn"
+                  @click="loadTeam(t)"
+                  type="button"
+                >
                   <span x-text="t.team_name"></span>
-                  <span class="badge" :class="t.is_valid ? 'badge--valid' : 'badge--invalid'"
-                        x-text="t.is_valid ? 'Kosher' : 'Violations'"></span>
+                  <span
+                    class="badge"
+                    :class="t.is_valid ? 'badge--status-active' : 'badge--fainted'"
+                    x-text="t.is_valid ? 'Kosher' : 'Violations'"
+                  ></span>
                 </button>
               </li>
             </template>
           </ul>
         </div>
       <% } %>
-    </div>
-  </div>
 
-  <%# Pokémon picker modal — WCAG §4.1.2 dialog pattern %>
+    </div><%# end sidebar %>
+  </div><%# end teambuilder-layout %>
+
+  <%# ── Pokémon picker modal ───────────────────────────────────────────── %>
+  <%# WCAG §4.1.2 — dialog role, aria-modal, focus management %>
   <div
     x-show="pickerOpen"
-    x-transition
+    x-transition.opacity
     role="dialog"
     aria-modal="true"
     aria-label="Choose a Pokémon"
     class="modal-overlay"
     @keydown.escape="closePicker()"
+    style="display:none"
   >
     <div class="modal" @click.stop>
       <div class="modal__header">
         <h2 class="modal__title">Choose a Pokémon</h2>
-        <button class="modal__close" @click="closePicker()" aria-label="Close picker" type="button">✕</button>
+        <button
+          class="modal__close"
+          @click="closePicker()"
+          aria-label="Close Pokémon picker"
+          type="button"
+        >✕</button>
       </div>
+
       <div class="modal__body">
         <label for="pokemon-search" class="form-label">Search by name or type</label>
         <input
@@ -144,37 +338,192 @@
           class="form-input"
           x-model="search"
           @input="filterPokemon()"
-          placeholder="e.g. Gogoat, Water, Fairy..."
+          placeholder="e.g. Gogoat, Water, Fairy…"
           autocomplete="off"
         >
-        <ul class="pokemon-list" role="listbox" aria-label="Pokémon results">
-          <template x-for="p in filteredPokemon.slice(0,50)" :key="p.id">
+
+        <ul
+          class="pokemon-picker-grid"
+          role="listbox"
+          aria-label="Pokémon results"
+          style="margin-top:.75rem"
+        >
+          <template x-for="p in filteredPokemon" :key="p.name">
             <li
-              class="pokemon-list__item"
-              :class="{ 'pokemon-list__item--forbidden': p.isForbidden }"
+              class="picker-mon"
+              :class="{ 'picker-mon--forbidden': p.isForbidden }"
               role="option"
               :aria-selected="false"
-              @click="selectPokemon(p)"
-              @keydown.enter="selectPokemon(p)"
+              :aria-disabled="p.isForbidden"
+              @click="!p.isForbidden && selectPokemon(p)"
+              @keydown.enter="!p.isForbidden && selectPokemon(p)"
               tabindex="0"
             >
-              <span class="pokemon-list__name" x-text="p.name"></span>
-              <span class="pokemon-list__types">
-                <template x-for="t in p.types" :key="t">
-                  <span class="type-badge" :class="'type-badge--' + t.toLowerCase()" x-text="t"></span>
+              <img
+                x-show="p.sprite"
+                :src="p.sprite"
+                :alt="p.displayName"
+                width="40" height="40"
+                loading="lazy"
+                style="image-rendering:pixelated;margin:0 auto"
+              >
+              <span class="picker-mon__name" x-text="p.displayName || p.name"></span>
+              <div class="picker-mon__types">
+                <template x-for="t in (p.types || [])" :key="t">
+                  <span
+                    class="type-badge type-badge--sm"
+                    :class="'type-badge--' + t.toLowerCase()"
+                    x-text="t"
+                  ></span>
                 </template>
-              </span>
-              <span x-show="p.isForbidden" class="pokemon-list__forbidden" aria-label="Forbidden">⚠</span>
+              </div>
+              <span
+                x-show="p.isForbidden"
+                class="picker-mon__forbidden"
+                aria-label="Forbidden"
+              >⚠ Forbidden</span>
             </li>
           </template>
-          <li x-show="filteredPokemon.length === 0" class="pokemon-list__empty">No results.</li>
+          <li
+            x-show="filteredPokemon.length === 0"
+            style="grid-column:1/-1;text-align:center;color:var(--color-text-muted);padding:1rem"
+          >No Pokémon found.</li>
         </ul>
       </div>
     </div>
   </div>
+  <div
+    x-show="pickerOpen"
+    class="modal-backdrop"
+    @click="closePicker()"
+    aria-hidden="true"
+    style="display:none"
+  ></div>
 
-  <div x-show="pickerOpen" class="modal-backdrop" @click="closePicker()" aria-hidden="true"></div>
-</div>
+  <%# ── Move picker modal ──────────────────────────────────────────────── %>
+  <div
+    x-show="movePickerOpen"
+    x-transition.opacity
+    role="dialog"
+    aria-modal="true"
+    aria-label="Choose a move"
+    class="modal-overlay"
+    @keydown.escape="closeMovePicker()"
+    style="display:none"
+  >
+    <div class="modal modal--wide" @click.stop>
+      <div class="modal__header">
+        <h2 class="modal__title">Choose a Move</h2>
+        <button
+          class="modal__close"
+          @click="closeMovePicker()"
+          aria-label="Close move picker"
+          type="button"
+        >✕</button>
+      </div>
+
+      <div class="modal__body">
+        <template x-if="movePickerTarget">
+          <p style="font-size:.85rem;color:var(--color-text-muted);margin-bottom:.75rem">
+            Showing moves for
+            <strong x-text="team[movePickerTarget.slotIdx]?.species"></strong>
+            (team slot <span x-text="movePickerTarget.slotIdx + 1"></span>,
+            move <span x-text="movePickerTarget.moveIdx + 1"></span>)
+          </p>
+        </template>
+
+        <label for="move-search" class="form-label">Search moves</label>
+        <input
+          type="search"
+          id="move-search"
+          class="form-input"
+          x-model="moveSearch"
+          @input="filterMoves()"
+          placeholder="e.g. Tackle, Fire Blast, physical…"
+          autocomplete="off"
+        >
+
+        <p x-show="loadingMoves" style="color:var(--color-text-muted);font-size:.9rem;margin-top:.5rem">
+          <span class="spinner"></span> Loading move pool…
+        </p>
+
+        <div
+          class="move-picker-list"
+          role="listbox"
+          aria-label="Available moves"
+          style="margin-top:.75rem;max-height:52vh;overflow-y:auto;display:flex;flex-direction:column;gap:.25rem"
+        >
+          <template x-for="m in filteredMoves.slice(0, 80)" :key="m.name">
+            <button
+              class="move-picker-item"
+              :class="{ 'move-picker-item--forbidden': m.isForbidden }"
+              @click="selectMove(m)"
+              type="button"
+              role="option"
+              :aria-selected="false"
+            >
+              <span class="move-picker-item__name" x-text="m.displayName || m.name"></span>
+              <span class="move-picker-item__meta">
+                <template x-if="m.type">
+                  <span
+                    class="type-badge type-badge--sm"
+                    :class="'type-badge--' + m.type"
+                    x-text="m.type"
+                  ></span>
+                </template>
+                <template x-if="m.damage_class">
+                  <span
+                    class="move-category"
+                    :class="'move-category--' + m.damage_class"
+                    x-text="m.damage_class.charAt(0).toUpperCase()"
+                    :title="m.damage_class"
+                  ></span>
+                </template>
+                <template x-if="m.power">
+                  <span style="font-size:.72rem;color:var(--color-text-muted)" x-text="m.power + ' pw'"></span>
+                </template>
+                <template x-if="m.accuracy">
+                  <span style="font-size:.72rem;color:var(--color-text-muted)" x-text="m.accuracy + '%'"></span>
+                </template>
+                <template x-if="m.pp">
+                  <span style="font-size:.72rem;color:var(--color-text-muted)" x-text="m.pp + ' PP'"></span>
+                </template>
+              </span>
+              <span
+                x-show="m.isForbidden"
+                class="move-picker-item__forbidden"
+                aria-label="Forbidden by Nuzlox rules"
+              >⚠ Forbidden</span>
+            </button>
+          </template>
+          <p
+            x-show="!loadingMoves && filteredMoves.length === 0"
+            style="text-align:center;color:var(--color-text-muted);padding:.75rem;font-size:.9rem"
+          >No moves found.</p>
+        </div>
+
+        <div
+          x-show="movePickerTarget && team[movePickerTarget?.slotIdx]?.moves[movePickerTarget?.moveIdx]"
+          style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--color-border)"
+        >
+          <button
+            class="btn btn--small btn--danger"
+            @click="clearMove()"
+            type="button"
+          >Remove current move</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    x-show="movePickerOpen"
+    class="modal-backdrop"
+    @click="closeMovePicker()"
+    aria-hidden="true"
+    style="display:none"
+  ></div>
+
+</div><%# end page-container %>
 
 <script>
   window.__TEAMBUILDER_CONFIG__ = JSON.parse(

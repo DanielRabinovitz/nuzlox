@@ -11,7 +11,7 @@
 
 module.exports = function requireAuth(req, res, next) {
   if (req.session && req.session.user) return next();
-  if (req.path.startsWith('/api/')) {
+  if (req.originalUrl.startsWith('/api/')) {
     return res.status(401).json({ error: 'Authentication required.' });
   }
   req.flash('error', 'Please log in to access that page.');

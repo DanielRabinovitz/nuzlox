@@ -87,6 +87,7 @@ async function generate() {
       'psycho-boost','power-whip',
     ],
     forbidden_move_categories: ['ghost', 'dark'],
+    forbidden_secondary_effects: ['par', 'brn', 'frz', 'psn', 'tox', 'slp', 'flinch', 'confusion'],
     forbidden_items: [
       // Ritual power items
       'mega-stone','z-crystal','dynamax-band','tera-orb','rusted-sword','rusted-shield',

@@ -2,14 +2,14 @@
 <%# @ref wallbreaker/docs/accessibility/APXpatterns/challenge-patterns.md — Total Recall %>
 <%# @ref wallbreaker/docs/accessibility/WCAG/02-operable.md §2.4.2 (page title set in route) %>
 
-<div class="page-container">
+<div class="page-container page-container--narrow" style="max-width:780px">
   <div class="page-header">
     <h1 class="page-header__title">Official Nuzlox Ruleset</h1>
     <% if (version) { %>
       <p class="page-header__meta">
         Version <strong><%= version.version_label %></strong>
         &middot; Published <time datetime="<%= version.published_at %>">
-          <%= new Date(version.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+          <%= new Date(version.published_at).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) %>
         </time>
         &middot; <a href="/ruleset/history">View history</a>
       </p>
@@ -22,58 +22,44 @@
     </div>
   <% } else { %>
 
-    <nav class="ruleset-toc" aria-label="Ruleset sections">
-      <h2 class="ruleset-toc__heading">Jump to section:</h2>
-      <ul class="ruleset-toc__list" role="list">
-        <% for (const [category] of byCategory) { %>
-          <li>
-            <a href="#<%= category.toLowerCase().replace(/[^a-z0-9]+/g,'-') %>">
-              <%= category %>
-            </a>
-          </li>
-        <% } %>
-      </ul>
-    </nav>
-
-    <% for (const [category, rules] of byCategory) { %>
-      <section
-        class="ruleset-section"
-        id="<%= category.toLowerCase().replace(/[^a-z0-9]+/g,'-') %>"
-        aria-labelledby="cat-<%= category.toLowerCase().replace(/[^a-z0-9]+/g,'-') %>"
-      >
-        <h2 class="ruleset-section__heading" id="cat-<%= category.toLowerCase().replace(/[^a-z0-9]+/g,'-') %>">
-          <%= category %>
-        </h2>
-
-        <% rules.forEach(rule => { %>
-          <article class="rule-card" id="rule-<%= rule.rule_key %>">
-            <h3 class="rule-card__title"><%= rule.title %></h3>
-            <div class="rule-card__body prose">
-              <%- rule.body.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>') %>
-            </div>
-            <% if (rule.citations && rule.citations.length > 0) { %>
-              <footer class="rule-card__citations">
-                <span class="rule-card__citations-label">Legal precedent:</span>
-                <% rule.citations.forEach(replyId => { %>
-                  <a href="/forum/ruling-#<%= replyId %>" class="rule-card__citation-link">
-                    Forum ruling #<%= replyId %>
-                  </a>
-                <% }) %>
-              </footer>
-            <% } %>
-          </article>
-        <% }) %>
-      </section>
-    <% } %>
+    <div class="ruleset-accordion">
+      <% for (const [category, rules] of byCategory) { %>
+        <details class="ruleset-details" open>
+          <summary class="ruleset-details__summary">
+            <%= category %>
+          </summary>
+          <div class="ruleset-details__body">
+            <% rules.forEach(rule => { %>
+              <article class="rule-card rule-card--<%= rule.severity || 'informational' %>" id="rule-<%= rule.rule_key %>">
+                <div class="rule-card__header">
+                  <h3 class="rule-card__title"><%= rule.title %></h3>
+                  <% if (rule.severity) { %>
+                    <span class="badge badge--severity-<%= rule.severity %>"><%= rule.severity %></span>
+                  <% } %>
+                </div>
+                <div class="rule-card__body prose">
+                  <%- rule.body.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>') %>
+                </div>
+                <% if (rule.citations && rule.citations.length > 0) { %>
+                  <footer class="rule-card__citations">
+                    <span class="rule-card__citations-label">Legal precedent:</span>
+                    <% rule.citations.forEach(replyId => { %>
+                      <a href="/forum/reply/<%= replyId %>" class="rule-card__citation-link">
+                        Forum ruling #<%= replyId %>
+                      </a>
+                    <% }) %>
+                  </footer>
+                <% } %>
+              </article>
+            <% }) %>
+          </div>
+        </details>
+      <% } %>
+    </div>
 
     <div class="ruleset-footer">
-      <p>
-        Questions about a rule? <a href="/forum">Debate it in the forum</a> —
-        forum rulings become official legal precedent.
-      </p>
-      <p>
-        <a href="/teambuilder">Check your team in the Teambuilder →</a>
-      </p>
+      <p>Questions about a rule? <a href="/forum">Debate it in the forum</a> — forum rulings become official legal precedent.</p>
+      <p><a href="/teambuilder">Check your team in the Teambuilder →</a></p>
     </div>
 
   <% } %>

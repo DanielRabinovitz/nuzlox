@@ -37,15 +37,15 @@ if (driver === 'sqlite') {
     _sqlite: sqlite,
 
     all(sql, params = []) {
-      return Promise.resolve(sqlite.prepare(sql).all(params));
+      return Promise.resolve(sqlite.prepare(sql).all(...params));
     },
 
     get(sql, params = []) {
-      return Promise.resolve(sqlite.prepare(sql).get(params));
+      return Promise.resolve(sqlite.prepare(sql).get(...params));
     },
 
     run(sql, params = []) {
-      const result = sqlite.prepare(sql).run(params);
+      const result = sqlite.prepare(sql).run(...params);
       return Promise.resolve({
         lastId:  result.lastInsertRowid,
         changes: result.changes,

@@ -2,6 +2,11 @@
 
 Nuzlox is a fan-made web application for the "Kosher Pokémon" challenge ruleset. Built on Node.js + Express for Hostinger's Phusion Passenger environment.
 
+## Repository
+
+- **Git author:** DanielRabinovitz &lt;danielrabinvoitz@gmail.com&gt;
+- **Branch:** `main`
+
 ## Architecture overview
 See [`architecture.md`](./architecture.md) for the full stack diagram, environment notes, and caching tiers.
 

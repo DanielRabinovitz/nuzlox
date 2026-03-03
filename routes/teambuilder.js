@@ -26,7 +26,6 @@ router.get('/', async (req, res, next) => {
     // teamData is injected into the page as a JSON script tag, then read by Alpine.js.
     const teamData = {
       rulesetVersion:   version?.version_label ?? null,
-      pokemonDataUrl:   '/cache/pokemon-data.json',
       rulesetSchemaUrl: '/cache/ruleset-validator.json',
       savedTeams,
     };

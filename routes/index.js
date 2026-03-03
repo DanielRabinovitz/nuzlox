@@ -16,6 +16,7 @@ const apiTeams         = require('./api/teams');
 const apiForum         = require('./api/forum');
 const apiTracker       = require('./api/tracker');
 const apiAdmin         = require('./api/admin');
+const apiPokeapi       = require('./api/pokeapi');
 
 module.exports = function mountRoutes(app) {
   app.use('/',           authRoutes);
@@ -28,6 +29,7 @@ module.exports = function mountRoutes(app) {
   app.use('/api/v1/forum',      apiForum);
   app.use('/api/v1/tracker',    apiTracker);
   app.use('/api/v1/admin',      apiAdmin);
+  app.use('/api/v1/pokeapi',    apiPokeapi);
 
   // Home page → redirect to ruleset (the primary content).
   app.get('/', (req, res) => res.redirect('/ruleset'));
