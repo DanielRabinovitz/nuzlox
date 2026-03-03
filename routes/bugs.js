@@ -25,9 +25,13 @@ const BugSchema = z.object({
 });
 
 router.get('/report', requireAuth, (req, res) => {
+  const referer = req.headers.referer || '';
+  const prefillUrl = referer.startsWith('http://') || referer.startsWith('https://')
+    ? referer
+    : '';
   res.render('bugs/report', {
-    pageTitle:  'Report a Bug — Nuzlox',
-    prefillUrl: req.headers.referer || '',
+    pageTitle: 'Report a Bug — Nuzlox',
+    prefillUrl,
   });
 });
 

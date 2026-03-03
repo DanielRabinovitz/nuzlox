@@ -6,6 +6,8 @@
     <p class="page-header__sub">Found something broken? Let us know and we'll fix it.</p>
   </div>
 
+  <p class="form-hint">Fields marked <span aria-hidden="true">*</span><span class="sr-only">with an asterisk</span> are required.</p>
+
   <form method="POST" action="/bugs/report" novalidate>
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
